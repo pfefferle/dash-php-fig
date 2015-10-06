@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-2/sl/meta/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-2 meta dokument</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="psr-2-meta-dokument">PSR-2 meta dokument</h1>
+
+<h2 id="1-povzetek">1. Povzetek</h2>
+
+<p>Namen tega vodiča je zmanjšanje kognitivnega trenja, ko se skenira kodo različnih avtorjev. To naredi tako,
+z naštevanjem skupnega niza pravil in pričakovanj o tem, kako oblikovati PHP kodo.</p>
+
+<p>Stilska pravila tu so pridobljena iz skupnih značilnosti med različnimi projekti članov. Ko različni avtorji
+sodelujejo med večimi projekti, pomaga imeti en niz smernic, ki so uporabljene med vsemi temi
+projekti. Tako da korist tega vodiča ni v samih pravilih, vendar v deljenju teh pravil.</p>
+
+<h2 id="2-glasovanje">2. Glasovanje</h2>
+
+<ul>
+<li><strong>Sprejetje glasovanja:</strong> <a href="https://groups.google.com/d/msg/php-fig/c-QVvnZdMQ0/TdDMdzKFpdIJ">ML</a></li>
+</ul>
+
+<h2 id="3-popravki">3. Popravki</h2>
+
+<h3 id="3-1-več-vrstični-argumenti-09-08-2013">3.1 - Več-vrstični argumenti (09/08/2013)</h3>
+
+<p>Uporaba enega ali več več-vrstičnih argumentov (t.j. polja ali anonimne funkcije) ne štejejo kot
+razdelitev samo seznama argumentov, zato Sekcija 4.6 ni avtomatsko uveljavljena. Polja in anonimne
+funkcije so zmožne razpenjanja v večih vrsticah.</p>
+
+<p>Sledeči primeri so odlično veljavni v PSR-2:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nx">somefunction</span><span class="p">(</span><span class="nv">$foo</span><span class="p">,</span> <span class="nv">$bar</span><span class="p">,</span> <span class="p">[</span>
+  <span class="c1">// ...</span>
+<span class="p">],</span> <span class="nv">$baz</span><span class="p">);</span>
+
+<span class="nv">$app</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/hello/{name}&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$app</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="k">return</span> <span class="s1">&#39;Hello &#39;</span><span class="o">.</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">escape</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span> 
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="3-2-razširitev-večih-vmesnikov-10-17-2013">3.2 - Razširitev večih vmesnikov (10/17/2013)</h3>
+
+<p>Ko razširjate več vmesnikov, bi moral seznam <code>razširitev</code> bi obravnavan enako kot seznam
+<code>implementacij</code>, kot je deklarirano v Sekciji 4.1.</p>
+
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><a href="http://www.php-fig.org/psr/psr-2/sl">PSR-2 — Vodič stila kode</a></li>
+    
+    
+    
+    <li><b>PSR-2 meta dokument</b></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-0" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-1" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-2" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-3" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-4" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="http://www.php-fig.org/psr/psr-7" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-2/sl/meta/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+</html>

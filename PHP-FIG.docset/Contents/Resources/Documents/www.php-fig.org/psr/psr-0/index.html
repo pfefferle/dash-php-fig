@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><!-- Mirrored from www.php-fig.org/psr/psr-0/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:26 GMT --><!-- Added by HTTrack --><head><meta content="text/html;charset=utf-8" http-equiv="content-type"/><!-- /Added by HTTrack -->
+
+        <meta charset="utf-8"/>
+        <meta content="chrome=1" http-equiv="X-UA-Compatible"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <link href="../../stylesheets/stylesheetc4ca.css?1" media="screen" rel="stylesheet" type="text/css"/>
+        <link href="../../stylesheets/pygment_tracc4ca.css?1" media="screen" rel="stylesheet" type="text/css"/>
+        <link href="../../stylesheets/printc4ca.css?1" media="print" rel="stylesheet" type="text/css"/>
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-0 — Autoloading Standard</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a class="button" href="https://github.com/php-fig/fig-standards"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><b>English (official)</b></li>
+      
+    
+      
+        <li><a href="pt-br/index.html">Brazilian Portuguese</a></li>
+      
+    
+      
+        <li><a href="fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="it/index.html">Italian</a></li>
+      
+    
+      
+        <li><a href="ru/index.html">Russian</a></li>
+      
+    
+      
+        <li><a href="sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><a href="es/index.html">Spanish</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+
+<h1 id="autoloading-standard"><a class="dashAnchor" name="//apple_ref/cpp/Section/Autoloading%20Standard"></a>Autoloading Standard</h1>
+
+<blockquote>
+<p><strong>Deprecated</strong> - As of 2014-10-21 PSR-0 has been marked as deprecated. <a href="../psr-4/index.html">PSR-4</a> is now recommended 
+as an alternative.</p>
+</blockquote>
+
+<p>The following describes the mandatory requirements that must be adhered
+to for autoloader interoperability.</p>
+
+<h2 id="mandatory"><a class="dashAnchor" name="//apple_ref/cpp/Section/Mandatory"></a>Mandatory</h2>
+
+<ul>
+<li>A fully-qualified namespace and class must have the following
+structure <code>\&lt;Vendor Name&gt;\(&lt;Namespace&gt;\)*&lt;Class Name&gt;</code></li>
+<li>Each namespace must have a top-level namespace ("Vendor Name").</li>
+<li>Each namespace can have as many sub-namespaces as it wishes.</li>
+<li>Each namespace separator is converted to a <code>DIRECTORY_SEPARATOR</code> when
+loading from the file system.</li>
+<li>Each <code>_</code> character in the CLASS NAME is converted to a
+<code>DIRECTORY_SEPARATOR</code>. The <code>_</code> character has no special meaning in the
+namespace.</li>
+<li>The fully-qualified namespace and class is suffixed with <code>.php</code> when
+loading from the file system.</li>
+<li>Alphabetic characters in vendor names, namespaces, and class names may
+be of any combination of lower case and upper case.</li>
+</ul>
+
+<h2 id="examples"><a class="dashAnchor" name="//apple_ref/cpp/Section/Examples"></a>Examples</h2>
+
+<ul>
+<li><code>\Doctrine\Common\IsolatedClassLoader</code> =&gt; <code>/path/to/project/lib/vendor/Doctrine/Common/IsolatedClassLoader.php</code></li>
+<li><code>\Symfony\Core\Request</code> =&gt; <code>/path/to/project/lib/vendor/Symfony/Core/Request.php</code></li>
+<li><code>\Zend\Acl</code> =&gt; <code>/path/to/project/lib/vendor/Zend/Acl.php</code></li>
+<li><code>\Zend\Mail\Message</code> =&gt; <code>/path/to/project/lib/vendor/Zend/Mail/Message.php</code></li>
+</ul>
+
+<h2 id="underscores-in-namespaces-and-class-names"><a class="dashAnchor" name="//apple_ref/cpp/Section/Underscores%20in%20Namespaces%20and%20Class%20Names"></a>Underscores in Namespaces and Class Names</h2>
+
+<ul>
+<li><code>\namespace\package\Class_Name</code> =&gt; <code>/path/to/project/lib/vendor/namespace/package/Class/Name.php</code></li>
+<li><code>\namespace\package_name\Class_Name</code> =&gt; <code>/path/to/project/lib/vendor/namespace/package_name/Class/Name.php</code></li>
+</ul>
+
+<p>The standards we set here should be the lowest common denominator for
+painless autoloader interoperability. You can test that you are
+following these standards by utilizing this sample SplClassLoader
+implementation which is able to load PHP 5.3 classes.</p>
+
+<h2 id="example-implementation"><a class="dashAnchor" name="//apple_ref/cpp/Section/Example%20Implementation"></a>Example Implementation</h2>
+
+<p>Below is an example function to simply demonstrate how the above
+proposed standards are autoloaded.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">function</span> <span class="nf">autoload</span><span class="p">(</span><span class="nv">$className</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$className</span> <span class="o">=</span> <span class="nb">ltrim</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="s1">'\\'</span><span class="p">);</span>
+    <span class="nv">$fileName</span>  <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+    <span class="nv">$namespace</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$lastNsPos</span> <span class="o">=</span> <span class="nb">strrpos</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="s1">'\\'</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$namespace</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$lastNsPos</span><span class="p">);</span>
+        <span class="nv">$className</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="nv">$lastNsPos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="nv">$fileName</span>  <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'\\'</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span> <span class="nv">$namespace</span><span class="p">)</span> <span class="o">.</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$fileName</span> <span class="o">.=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span> <span class="nv">$className</span><span class="p">)</span> <span class="o">.</span> <span class="s1">'.php'</span><span class="p">;</span>
+
+    <span class="k">require</span> <span class="nv">$fileName</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nb">spl_autoload_register</span><span class="p">(</span><span class="s1">'autoload'</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="splclassloader-implementation"><a class="dashAnchor" name="//apple_ref/cpp/Section/SplClassLoader%20Implementation"></a>SplClassLoader Implementation</h2>
+
+<p>The following gist is a sample SplClassLoader implementation that can
+load your classes if you follow the autoloader interoperability
+standards proposed above. It is the current recommended way to load PHP
+5.3 classes that follow these standards.</p>
+
+<ul>
+<li><a href="http://gist.github.com/221634">http://gist.github.com/221634</a></li>
+</ul>
+
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a class="button mailing-list-button" href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a class="button mailing-list-button" href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a class="button" href="../../irc/index.html">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a class="button" href="../../faq/index.html" id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a class="button" href="../index.html">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a class="button" href="index.html">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a class="button" href="../psr-1/index.html">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a class="button" href="../psr-2/index.html">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a class="button" href="../psr-3/index.html">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a class="button" href="../psr-4/index.html">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a class="button" href="../psr-7/index.html">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        
+    
+
+
+
+</body><!-- Mirrored from www.php-fig.org/psr/psr-0/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:28 GMT --></html>

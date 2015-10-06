@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-0/es/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-0 — Estándar de autocarga de clases</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><a href="../pt-br/index.html">Brazilian Portuguese</a></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="../it/index.html">Italian</a></li>
+      
+    
+      
+        <li><a href="../ru/index.html">Russian</a></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><b>Spanish</b></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="estándar-de-autocarga-de-clases">Estándar de autocarga de clases</h1>
+
+<blockquote>
+<p><strong>Obsoleto</strong> - A partir del 21/10/2014 el estándar PSR-0 se ha marcado como obsoleto. Ahora se recomienda <a href="../../psr-4/index.html">PSR-4</a>
+como alternativa.</p>
+</blockquote>
+
+<p>A continuación se describen los requisitos obligatorios que deben cumplirse para la interoperabilidad del autoloader.</p>
+
+<h2 id="obligatorio">Obligatorio</h2>
+
+<ul>
+<li>Un espacio de nombres y clase completamente cualificada debe tener la siguiente estructura <code>\&lt;Nombre del proveedor&gt;\(&lt;Paquete&gt;\)*&lt;Nombre de clase&gt;</code>.</li>
+<li>Cada espacio de nombres debe tener un espacio de nombres de nivel superior (&quot;Nombre del proveedor&quot;).</li>
+<li>Cada espacio de nombres puede tener tantos sub-espacios de nombres como sea necesario.</li>
+<li>Cada separador de espacio de nombres se convierte en la constante <code>DIRECTORY_SEPARATOR</code> cuando se carga desde el sistema de archivos. [^1]</li>
+<li>Cada carácter <code>_</code> en el nombre de la clase se convierte en la constante <code>DIRECTORY_SEPARATOR</code>. El carácter <code>_</code> no tiene ningún significado especial en el espacio de nombres.</li>
+<li>Al espacio de nombres y la clase completamente cualificada se le añade el sufijo <code>.php</code> cuando se cargue desde el sistema de archivos.</li>
+<li>Los caracteres alfabéticos en los nombres de proveedor, espacios de nombres y nombres de clase pueden contener cualquier combinación de mayúsculas y minúsculas.</li>
+</ul>
+
+<h2 id="ejemplos">Ejemplos</h2>
+
+<ul>
+<li><code>\Doctrine\Common\IsolatedClassLoader</code> =&gt; <code>/directorio/del/proyecto/lib/vendor/Doctrine/Common/IsolatedClassLoader.php</code></li>
+<li><code>\Symfony\Core\Request</code> =&gt; <code>/directorio/del/proyecto/lib/vendor/Symfony/Core/Request.php</code></li>
+<li><code>\Zend\Acl</code> =&gt; <code>/directorio/del/proyecto/lib/vendor/Zend/Acl.php</code></li>
+<li><code>\Zend\Mail\Message</code> =&gt; <code>/directorio/del/proyecto/lib/vendor/Zend/Mail/Message.php</code></li>
+</ul>
+
+<h2 id="guiones-bajos-en-espacios-de-nombres-y-nombres-de-clase">Guiones bajos en Espacios de nombres y nombres de Clase</h2>
+
+<ul>
+<li><code>\espacio_de_nombres\paquete\Nombre_De_Clase</code> =&gt; <code>/directorio/del/proyecto/lib/proveedor/espacio_de_nombres/paquete/Nombre/De/Clase.php</code></li>
+<li><code>\espacio_de_nombres\nombre_de_paquete\Nombre_De_Clase</code> =&gt; <code>/directorio/del/proyecto/lib/proveedor/espacio_de_nombres/nombre_de_paquete/Nombre/De/Clase.php</code></li>
+</ul>
+
+<p>El estándar aquí descrito, debe ser el mínimo común denominador para la interoperabilidad del autoloader. Puede comprobar que sigue estas normas mediante la utilización del la implementación de ejemplo de autoloader SplClassLoader, capaz de cargar clases de PHP 5.3.</p>
+
+<h2 id="ejemplo-de-implementación">Ejemplo de implementación</h2>
+
+<p>A continuación, se muestra una función de ejemplo para demostrar de forma sencilla cómo se cargan de automáticamente las clases con la propuesta anterior.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">function</span> <span class="nf">autoload</span><span class="p">(</span><span class="nv">$nombreDeClase</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$nombreDeClase</span> <span class="o">=</span> <span class="nb">ltrim</span><span class="p">(</span><span class="nv">$nombreDeClase</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">);</span>
+    <span class="nv">$nombreDeFichero</span>  <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="nv">$nombreDeEspacio</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$ultimaPos</span> <span class="o">=</span> <span class="nb">strrpos</span><span class="p">(</span><span class="nv">$nombreDeClase</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$nombreDeEspacio</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$nombreDeClase</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$ultimaPos</span><span class="p">);</span>
+        <span class="nv">$nombreDeClase</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$nombreDeClase</span><span class="p">,</span> <span class="nv">$ultimaPos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="nv">$nombreDeFichero</span>  <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span> <span class="nv">$nombreDeEspacio</span><span class="p">)</span> <span class="o">.</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$nombreDeFichero</span> <span class="o">.=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span> <span class="nv">$nombreDeClase</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;.php&#39;</span><span class="p">;</span>
+
+    <span class="k">require</span> <span class="nv">$nombreDeFichero</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="implementación-de-splclassloader">Implementación de SplClassLoader</h2>
+
+<p>El siguiente <em>gist</em>, es un ejemplo de implementación de SplClassLoader, que puede cargar sus clases si ha seguido el estándar anteriormente expuesto. Este es el método recomendado para la carga de clases de PHP 5.3 que siga estas normas.</p>
+
+<ul>
+<li><a href="http://gist.github.com/221634">http://gist.github.com/221634</a></li>
+</ul>
+
+<h2 id="notas">Notas</h2>
+
+<p>[^1]: El nombre del proveedor se traduce en inglés como <code>vendor</code>. La constante <code>DIRECTORY_SEPARATOR</code> contiene el carácter de separación de directorios, diferente en cada sistema operativo. Por ejemplo en *Unix u OS X este carácter es la barra <code>/</code>
+mientras que en Windows se trata de la barra invertida <code>\</code>.</p>
+
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../../psr-4/index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-0/es/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+</html>

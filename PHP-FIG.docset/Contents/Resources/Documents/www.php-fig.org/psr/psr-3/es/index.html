@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-3/es/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-3 — Interfaz de Logger</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><b>Spanish</b></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="interfaz-de-logger">Interfaz de Logger</h1>
+
+<p>Este documento describe una interfaz común para todas las librerías de <code>logging</code>.</p>
+
+<p>En el documento original se usa el RFC 2119 para el uso de las palabras MUST, MUST NOT, SHOULD, SOULD NOT y MAY. Para que la traducción sea lo más fiel posible, se traducira siempre MUST como el verbo deber en presente (DEBE, DEBEN), SHOULD como el verbo deber en condicional (DEBERÍA, DEBERÍAN) y el verbo MAY como el verbo PODER.</p>
+
+<p>El objetivo principal es permitir a todas las librerías usar un objecto <code>Psr\Log\LoggerInterface</code> y escribir logs con él de manera simple y universal. Frameworks y CMSs que tengan necesidades específicas PUEDEN extender la interfaz para su propio uso, pero DEBERÍA mantenerse la compatibilidad con este documento. Eso asegura que las librerías de terceros usadas en la aplicación pueden escribir en los logs centralizados de la aplicación.</p>
+
+<p>La palabra <code>implementación</code> en este documento tiene que ser interpretada como un objeto que implementa la interfaz <code>LoggerInterface</code>
+en una librería de logs relacionada o un framework. Los usuarios de los logs son referidos como <code>usuario</code>.</p>
+
+<h2 id="1-especificación">1. Especificación</h2>
+
+<h3 id="1-1-fundamental">1.1 Fundamental</h3>
+
+<ul>
+<li><p>El <code>LoggerInterface</code> expone ocho métodos para la escritura de logs en los ocho niveles definidos en el <a href="http://tools.ietf.org/html/rfc5424">RFC 5424</a> (debug, info, notice, warning, error, critical, alert, emergency). [^1]</p></li>
+<li><p>Un noveno método, <code>log</code>, acepta un nivel de log como primer parámetro. La llamada a este método con alguna de las constantes de nivel de log, DEBE tener el mismo resultado que la llamada al método específico de dicho nivel. Las llamadas a este método con un nivel no definido por esta norma DEBEN lanzar una excepción de tipo <code>Psr\Log\InvalidArgumentException</code> si la implementación no conoce el nivel. Los usuarios NO DEBERÍAN usar niveles específicos sin conocer de manera precisa que la implementación en uso lo soporta.</p></li>
+</ul>
+
+<h3 id="1-2-mensaje">1.2 Mensaje</h3>
+
+<ul>
+<li><p>Cada método debería aceptar una cadena de texto como mensaje, o un objeto con el método <code>__toString()</code>. Las implementaciones PUEDEN tener un tratamiento especial para el objeto en uso. En este caso, la implementación DEBE convertirlo a una cadena de texto.</p></li>
+<li><p>El mensaje PUEDE contener marcadores que las implementaciones PUEDEN remplazar con los valores de una array contextual.</p></li>
+</ul>
+
+<p>Los nombres de los marcadores DEBEN corresponder con las claves del array contextual.</p>
+
+<p>Los nombres de los marcadores DEBEN estar delimitados con una llave de apertura <code>{</code> y una llave de cierre <code>}</code>. NO DEBE
+  haber ningún espacio en blanco entre los delimitadores (llaves) y el nombre del marcador.</p>
+
+<p>Los nombres de los marcadores DEBERÍAN estar compuestos sólo por los caracteres <code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, guión bajo <code>_</code>, y punto <code>.</code>. El uso de otros caracteres está reservado para futuras modificaciones en los nombres de los marcadores en la norma.</p>
+
+<p>Las implementaciones PUEDEN usar marcadores para implementar varias estrategias de escape y traducción para mostrar en los logs.
+  Los usuarios NO DEBERÍAN pre-escapar valores de marcadores, dado que no podrían conocer en qué contexto serían mostrados los datos.</p>
+
+<p>El siguiente código es un ejemplo de implementación de interpolación de marcadores únicamente a modo de referencia:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">  /**</span>
+<span class="x">   * Reemplaza los valores de contexto por los marcadores del mensaje.</span>
+<span class="x">   */</span>
+<span class="x">  function interpolacion($mensaje, array $contexto = array())</span>
+<span class="x">  {</span>
+<span class="x">      // crea un array de sustituciones con llaves alrededor de cada clave</span>
+<span class="x">      // del array contextual</span>
+<span class="x">      $reemplazo = array();</span>
+<span class="x">      foreach ($contexto as $clave =&gt; $valor) {</span>
+<span class="x">          $reemplazo[&#39;{&#39; . $clave . &#39;}&#39;] = $valor;</span>
+<span class="x">      }</span>
+
+<span class="x">      // Reemplaza los valores dentro del mensaje y lo devuelve</span>
+<span class="x">      return strtr($mensaje, $reemplazo);</span>
+<span class="x">  }</span>
+
+<span class="x">  // un mensaje con un marcador delimitado por llaves</span>
+<span class="x">  $mensaje = &quot;Usuario {nombre_de_usuario} creado&quot;;</span>
+
+<span class="x">  // un array contextual con los marcadores =&gt; valores de sustitución</span>
+<span class="x">  $contexto = array(&#39;nombre_de_usuario&#39; =&gt; &#39;Pedro&#39;);</span>
+
+<span class="x">  // imprime &quot;Usuario Pedro creado&quot;</span>
+<span class="x">  echo interpolacion($mensaje, $contexto);</span>
+</code></pre></div>
+<h3 id="1-3-contexto">1.3 Contexto</h3>
+
+<ul>
+<li><p>Cada método acepta un array de datos contextual. Esto se usa para contener cualquier información extraña que no encaje bien en una cadena de texto. El array puede contener cualquier cosa. Las implementaciones DEBEN asegurar que el tratamiento de los datos de contexto se hace con la mayor claridad posible. Un valor dado en el contexto NO DEBE lanzar ninguna excepción, error, warning o notice de PHP.</p></li>
+<li><p>Si un objecto <code>Exception</code> es pasado en el array contextual, DEBE ir en la clave <code>&#39;exception&#39;</code>. Mostrar excepciones en el log es un patrón común y permite a las implementaciones extraer la traza de la pila del error cuando la aplicación de log lo soporte. Las implementaciones DEBEN verificar que la clave <code>&#39;exception&#39;</code> contiene una <code>Exception</code> antes de usarla como tal, dado que PUEDE contener cualquier cosa.</p></li>
+</ul>
+
+<h3 id="1-4-clases-de-ayuda-e-interfaces">1.4 Clases de ayuda e Interfaces</h3>
+
+<ul>
+<li><p>La clase <code>Psr\Log\AbstractLogger</code> permite implementar la interfaz <code>LoggerInterface</code> de manera sencilla extendiéndola e implementado el método genérico <code>log</code>. Los otros ocho métodos realizan una llamada con el mensaje y el array contextual a este método.</p></li>
+<li><p>De manera similar, usando <code>Psr\Log\LoggerTrait</code> sólo necesita implementar el método genérico <code>log</code>. Tenga en cuenta que los traits no permiten implementar interfaces, en ese caso tendrá que hacer un <code>implement LoggerInterface</code>.</p></li>
+<li><p>La clase <code>Psr\Log\NullLogger</code> está incluida junto con la interfaz. PUEDE ser usada por los usuarios de la interfaz para proveer un escape seguro en la implementación si no se ha provisto de un logger. De todas formas, imprimir logs de manera condicional puede ser una mejor práctica si el coste de la creación de los datos de contexto es alta.</p></li>
+<li><p>La clase <code>Psr\Log\LoggerAwareInterface</code> sólo contiene el método <code>setLogger(LoggerInterface $logger)</code> y puede ser usada por frameworks para auto enlazar de manera arbitraria instancias de un logger.</p></li>
+<li><p>El trait <code>Psr\Log\LoggerAwareTrait</code> puede ser usado para implementar el equivalente a la interfaz de manera sencilla en cualquier clase. Le provee acceso a <code>$this-&gt;logger</code>.</p></li>
+<li><p>La clase <code>Psr\Log\LogLevel</code> contiene las constantes para los ocho niveles de log.</p></li>
+</ul>
+
+<h2 id="2-paquete">2. Paquete</h2>
+
+<p>Las interfaces y clases descritas, las clases de excepción relevantes y una serie de test para comprobar el funcionamiento de su
+implementación se proveen como parte del paquete <a href="https://packagist.org/packages/psr/log">psr/log</a></p>
+
+<h2 id="3-psr-log-loggerinterface">3. <code>Psr\Log\LoggerInterface</code></h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Psr\Log</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Describe una instancia de logger</span>
+<span class="sd"> * </span>
+<span class="sd"> * El mensaje DEBE ser una cadena o un objecto que implemente __toString().</span>
+<span class="sd"> *</span>
+<span class="sd"> * El mensaje PUEDE contener marcadores con el formato: {foo} donde foo</span>
+<span class="sd"> * será reemplazado por el valor de la clave &quot;foo&quot; en el array de contexto.</span>
+<span class="sd"> *</span>
+<span class="sd"> * El array de contexto puede contener cualquier dato arbitrario de datos, la</span>
+<span class="sd"> * única suposición que pueden hacer las implementaciones es si se provee</span>
+<span class="sd"> * una instancia de `Exception` para producir una pila de trazas, ésta TIENE QUE</span>
+<span class="sd"> * estar en la clave &quot;exception&quot;.</span>
+<span class="sd"> *</span>
+<span class="sd"> * Revise https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md</span>
+<span class="sd"> * para obtener la especificación completa de esta interfaz.</span>
+<span class="sd"> */</span>
+<span class="k">interface</span> <span class="nx">LoggerInterface</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * El sistema no está disponible.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">emergency</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Debe actuarse de manera inmediata.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Ejemplo: Sitio web caído, base de datos no disponible, etc. Esto debería</span>
+<span class="sd">     * mandar un SMS de alerta y despertarle.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">alert</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Condiciones críticas.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Ejemplo: Componente de la aplicación no disponible, excepción inesperada.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">critical</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Errores en tiempo de ejecución que no requieren de una acción inmediata</span>
+<span class="sd">     * pero que deberían ser imprimidas en el log y monitoreadas.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">error</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Evento excepcional pero que no implica error sino adevertencia.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Ejemplo: Uso de APIs obsoletas, mal uso de un API, cosas indeseables que</span>
+<span class="sd">     * no son necesariamente un error.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">warning</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Eventos normales pero significantes.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">notice</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Evento interesante.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Ejemplo: Acceso de usuarios, SQL logs.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">info</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Información detallada de debug.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">debug</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Imprime un log con nivel arbitrario.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param mixed $level</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">log</span><span class="p">(</span><span class="nv">$level</span><span class="p">,</span> <span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="4-psr-log-loggerawareinterface">4. <code>Psr\Log\LoggerAwareInterface</code></h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Psr\Log</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Describe un objecto que soporta loggers.</span>
+<span class="sd"> */</span>
+<span class="k">interface</span> <span class="nx">LoggerAwareInterface</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Define una instancia de log en el objeto</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param LoggerInterface $logger</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setLogger</span><span class="p">(</span><span class="nx">LoggerInterface</span> <span class="nv">$logger</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="5-psr-log-loglevel">5. <code>Psr\Log\LogLevel</code></h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Psr\Log</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Describe los niveles de log</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">LogLevel</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="no">EMERGENCY</span> <span class="o">=</span> <span class="s1">&#39;emergency&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">ALERT</span>     <span class="o">=</span> <span class="s1">&#39;alert&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">CRITICAL</span>  <span class="o">=</span> <span class="s1">&#39;critical&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">ERROR</span>     <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">WARNING</span>   <span class="o">=</span> <span class="s1">&#39;warning&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">NOTICE</span>    <span class="o">=</span> <span class="s1">&#39;notice&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">INFO</span>      <span class="o">=</span> <span class="s1">&#39;info&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">DEBUG</span>     <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="notas">Notas</h2>
+
+<p>[^1]: Los términos expresados en inglés debug, info, notice, warning, error, critical, alert y emergency se traducen literalmente al español como depuración, información, nota, advertencia, error, crítico, alerta y emergencia respectivamente, e implican un nivel de gravedad de menor a mayor.</p>
+
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../../psr-4/index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-3/es/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+</html>

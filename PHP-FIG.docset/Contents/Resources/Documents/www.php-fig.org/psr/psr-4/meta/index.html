@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-4/meta/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-4 Meta Document</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+
+
+
+<h1 id="psr-4-meta-document">PSR-4 Meta Document</h1>
+
+<h2 id="1-summary">1. Summary</h2>
+
+<p>The purpose is to specify the rules for an interoperable PHP autoloader that
+maps namespaces to file system paths, and that can co-exist with any other SPL
+registered autoloader.  This would be an addition to, not a replacement for,
+PSR-0.</p>
+
+<h2 id="2-why-bother">2. Why Bother?</h2>
+
+<h3 id="history-of-psr-0">History of PSR-0</h3>
+
+<p>The PSR-0 class naming and autoloading standard rose out of the broad
+acceptance of the Horde/PEAR convention under the constraints of PHP 5.2 and
+previous. With that convention, the tendency was to put all PHP source classes
+in a single main directory, using underscores in the class name to indicate
+pseudo-namespaces, like so:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">/path/to/src/
+    VendorFoo/
+        Bar/
+            Baz.php     # VendorFoo_Bar_Baz
+    VendorDib/
+        Zim/
+            Gir.php     # Vendor_Dib_Zim_Gir
+</code></pre></div>
+<p>With the release of PHP 5.3 and the availability of namespaces proper, PSR-0
+was introduced to allow both the old Horde/PEAR underscore mode <em>and</em> the use
+of the new namespace notation. Underscores were still allowed in the class
+name to ease transition from the older namespace naming to the newer naming,
+and thereby to encourage wider adoption.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">/path/to/src/
+    VendorFoo/
+        Bar/
+            Baz.php     # VendorFoo_Bar_Baz
+    VendorDib/
+        Zim/
+            Gir.php     # VendorDib_Zim_Gir
+    Irk_Operation/
+        Impending_Doom/
+            V1.php
+            V2.php      # Irk_Operation\Impending_Doom\V2
+</code></pre></div>
+<p>This structure is informed very much by the fact that the PEAR installer moved
+source files from PEAR packages into a single central directory.</p>
+
+<h3 id="along-comes-composer">Along Comes Composer</h3>
+
+<p>With Composer, package sources are no longer copied to a single global
+location. They are used from their installed location and are not moved
+around. This means that with Composer there is no &quot;single main directory&quot; for
+PHP sources as with PEAR. Instead, there are multiple directories; each
+package is in a separate directory for each project.</p>
+
+<p>To meet the requirements of PSR-0, this leads to Composer packages looking
+like this:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vendor/
+    vendor_name/
+        package_name/
+            src/
+                Vendor_Name/
+                    Package_Name/
+                        ClassName.php       # Vendor_Name\Package_Name\ClassName
+            tests/
+                Vendor_Name/
+                    Package_Name/
+                        ClassNameTest.php   # Vendor_Name\Package_Name\ClassNameTest
+</code></pre></div>
+<p>The &quot;src&quot; and &quot;tests&quot; directories have to include vendor and package directory
+names. This is an artifact of PSR-0 compliance.</p>
+
+<p>Many find this structure to be deeper and more-repetitive than necessary. This
+proposal suggests that an additional or superseding PSR would be useful so
+that we can have packages that look more like the following:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vendor/
+    vendor_name/
+        package_name/
+            src/
+                ClassName.php       # Vendor_Name\Package_Name\ClassName
+            tests/
+                ClassNameTest.php   # Vendor_Name\Package_Name\ClassNameTest
+</code></pre></div>
+<p>This would require an implementation of what was initially called
+&quot;package-oriented autoloading&quot; (as vs the traditional &quot;direct class-to-file
+autoloading&quot;).</p>
+
+<h3 id="package-oriented-autoloading">Package-Oriented Autoloading</h3>
+
+<p>It&#39;s difficult to implement package-oriented autoloading via an extension or
+amendment to PSR-0, because PSR-0 does not allow for an intercessory path
+between any portions of the class name. This means the implementation of a
+package-oriented autoloader would be more complicated than PSR-0. However, it
+would allow for cleaner packages.</p>
+
+<p>Initially, the following rules were suggested:</p>
+
+<ol>
+<li><p>Implementors MUST use at least two namespace levels: a vendor name, and
+package name within that vendor. (This top-level two-name combination is
+hereinafter referred to as the vendor-package name or the vendor-package
+namespace.)</p></li>
+<li><p>Implementors MUST allow a path infix between the vendor-package namespace
+and the remainder of the fully qualified class name.</p></li>
+<li><p>The vendor-package namespace MAY map to any directory. The remaining
+portion of the fully-qualified class name MUST map the namespace names to
+identically-named directories, and MUST map the class name to an
+identically-named file ending in .php.</p></li>
+</ol>
+
+<p>Note that this means the end of underscore-as-directory-separator in the class
+name. One might think underscores should be honored as they are under
+PSR-0, but seeing as their presence in that document is in reference to
+transitioning away from PHP 5.2 and previous pseudo-namespacing, it is
+acceptable to remove them here as well.</p>
+
+<h2 id="3-scope">3. Scope</h2>
+
+<h3 id="3-1-goals">3.1 Goals</h3>
+
+<ul>
+<li><p>Retain the PSR-0 rule that implementors MUST use at least two namespace
+levels: a vendor name, and package name within that vendor.</p></li>
+<li><p>Allow a path infix between the vendor-package namespace and the remainder of
+the fully qualified class name.</p></li>
+<li><p>Allow the vendor-package namespace MAY map to any directory, perhaps
+multiple directories.</p></li>
+<li><p>End the honoring of underscores in class names as directory separators</p></li>
+</ul>
+
+<h3 id="3-2-non-goals">3.2 Non-Goals</h3>
+
+<ul>
+<li>Provide a general transformation algorithm for non-class resources</li>
+</ul>
+
+<h2 id="4-approaches">4. Approaches</h2>
+
+<h3 id="4-1-chosen-approach">4.1 Chosen Approach</h3>
+
+<p>This approach retains key characteristics of PSR-0 while eliminating the
+deeper directory structures it requires. In addition, it specifies certain
+additional rules that make implementations explicitly more interoperable.</p>
+
+<p>Although not related to directory mapping, the final draft also specifies how
+autoloaders should handle errors.  Specifically, it forbids throwing exceptions
+or raising errors.  The reason is two-fold.</p>
+
+<ol>
+<li><p>Autoloaders in PHP are explicitly designed to be stackable so that if one
+autoloader cannot load a class another has a chance to do so. Having an autoloader
+trigger a breaking error condition violates that compatibility.</p></li>
+<li><p><code>class_exists()</code> and <code>interface_exists()</code> allow &quot;not found, even after trying to
+autoload&quot; as a legitimate, normal use case. An autoloader that throws exceptions
+renders <code>class_exists()</code> unusable, which is entirely unacceptable from an interoperability
+standpoint.  Autoloaders that wish to provide additional debugging information
+in a class-not-found case should do so via logging instead, either to a PSR-3
+compatible logger or otherwise.</p></li>
+</ol>
+
+<p>Pros:</p>
+
+<ul>
+<li><p>Shallower directory structures</p></li>
+<li><p>More flexible file locations</p></li>
+<li><p>Stops underscore in class name from being honored as directory separator</p></li>
+<li><p>Makes implementations more explicitly interoperable</p></li>
+</ul>
+
+<p>Cons:</p>
+
+<ul>
+<li>It is no longer possible, as under PSR-0, to merely examine a class name to
+determine where it is in the file system (the &quot;class-to-file&quot; convention
+inherited from Horde/PEAR).</li>
+</ul>
+
+<h3 id="4-2-alternative-stay-with-psr-0-only">4.2 Alternative: Stay With PSR-0 Only</h3>
+
+<p>Staying with PSR-0 only, although reasonable, does leave us with relatively
+deeper directory structures.</p>
+
+<p>Pros:</p>
+
+<ul>
+<li>No need to change anyone&#39;s habits or implementations</li>
+</ul>
+
+<p>Cons:</p>
+
+<ul>
+<li><p>Leaves us with deeper directory structures</p></li>
+<li><p>Leaves us with underscores in the class name being honored as directory
+separators</p></li>
+</ul>
+
+<h3 id="4-3-alternative-split-up-autoloading-and-transformation">4.3 Alternative: Split Up Autoloading And Transformation</h3>
+
+<p>Beau Simensen and others suggested that the transformation algorithm might be
+split out from the autoloading proposal, so that the transformation rules
+could be referenced by other proposals. After doing the work to separate them,
+followed by a poll and some discussion, the combined version (i.e.,
+transformation rules embedded in the autoloader proposal) was revealed as the
+preference.</p>
+
+<p>Pros:</p>
+
+<ul>
+<li>Transformation rules could be referenced separately by other proposal</li>
+</ul>
+
+<p>Cons:</p>
+
+<ul>
+<li>Not in line with the wishes of poll respondents and some collaborators</li>
+</ul>
+
+<h3 id="4-4-alternative-use-more-imperative-and-narrative-language">4.4 Alternative: Use More Imperative And Narrative Language</h3>
+
+<p>After the second vote was pulled by a Sponsor after hearing from multiple +1 
+voters that they supported the idea but did not agree with (or understand) the 
+wording of the proposal, there was a period during which the voted-on proposal
+was expanded with greater narrative and somewhat more imperative language. This
+approach was decried by a vocal minority of participants. After some time, Beau
+Simensen started an experimental revision with an eye to PSR-0; the Editor and
+Sponsors favored this more terse approach and shepherded the version now under
+consideration, written by Paul M. Jones and contributed to by many.</p>
+
+<h3 id="compatability-note-with-php-5-3-2-and-below">Compatability Note with PHP 5.3.2 and below</h3>
+
+<p>PHP versions before 5.3.3 do not strip the leading namespace separator, so 
+the responsibility to look out for this falls on the implementation. Failing 
+to strip the leading namespace seperator could lead to unexpected behavior. </p>
+
+<h2 id="5-people">5. People</h2>
+
+<h3 id="5-1-editor">5.1 Editor</h3>
+
+<ul>
+<li>Paul M. Jones, Solar/Aura</li>
+</ul>
+
+<h3 id="5-2-sponsors">5.2 Sponsors</h3>
+
+<ul>
+<li>Phil Sturgeon, PyroCMS (Coordinator)</li>
+<li>Larry Garfield, Drupal</li>
+</ul>
+
+<h3 id="5-3-contributors">5.3 Contributors</h3>
+
+<ul>
+<li>Andreas Hennings</li>
+<li>Bernhard Schussek</li>
+<li>Beau Simensen</li>
+<li>Donald Gilbert </li>
+<li>Mike van Riel</li>
+<li>Paul Dragoonis</li>
+<li>Too many others to name and count</li>
+</ul>
+
+<h2 id="6-votes">6. Votes</h2>
+
+<ul>
+<li><p><strong>Entrance Vote:</strong> <a href="https://groups.google.com/d/msg/php-fig/_LYBgfcEoFE/ZwFTvVTIl4AJ">https://groups.google.com/d/msg/php-fig/_LYBgfcEoFE/ZwFTvVTIl4AJ</a></p></li>
+<li><p><strong>Acceptance Vote:</strong></p>
+
+<ul>
+<li>1st attempt: <a href="https://groups.google.com/forum/#!topic/php-fig/Ua46E344_Ls">https://groups.google.com/forum/#!topic/php-fig/Ua46E344_Ls</a>,
+presented prior to new workflow; aborted due to accidental proposal modification</li>
+<li>2nd attempt: <a href="https://groups.google.com/forum/#!topic/php-fig/NWfyAeF7Psk">https://groups.google.com/forum/#!topic/php-fig/NWfyAeF7Psk</a>,
+cancelled at the discretion of the sponsor <a href="https://groups.google.com/forum/#!topic/php-fig/t4mW2TQF7iE">https://groups.google.com/forum/#!topic/php-fig/t4mW2TQF7iE</a></li>
+<li>3rd attempt: TBD</li>
+</ul></li>
+</ul>
+
+<h2 id="7-relevant-links">7. Relevant Links</h2>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/lpmJcmkNYjM">Autoloader, round 4</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/fGwA6XHlYhI">POLL: Autoloader: Split or Combined?</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/kUbzJAbHxmg">PSR-X autoloader spec: Loopholes, ambiguities</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/422dFBGs1Yc">Autoloader: Combine Proposals?</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/Y4xc71Q3YEQ">Package-Oriented Autoloader, Round 2</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/bnoiTxE8L28">Autoloader: looking again at namespace</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/SJTL1ec46II">DISCUSSION: Package-Oriented Autoloader - vote against</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/Ua46E344_Ls">VOTE: Package-Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/qT7mEy0RIuI">Proposal: Package-Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!searchin/php-fig/package$20oriented$20autoloader/php-fig/JdR-g8ZxKa8/jJr80ard-ekJ">Towards a Package Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/php-fig/oXr-2TU1lQY">List of Alternative PSR-4 Proposals</a></li>
+<li><a href="https://groups.google.com/forum/#!searchin/php-fig/psr-4$20summary/php-fig/bSTwUX58NhE/YPcFgBjwvpEJ">Summary of [post-Acceptance Vote pull] PSR-4 discussions</a></li>
+</ul>
+
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><a href="../index.html">PSR-4 — Autoloader</a></li>
+    
+    
+    
+    <li><b>PSR-4 Meta Document</b></li>
+    
+    
+    
+    <li><a href="../examples/index.html">Example Implementations of PSR-4</a></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-4/meta/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+</html>

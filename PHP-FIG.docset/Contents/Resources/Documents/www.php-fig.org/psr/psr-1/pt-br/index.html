@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-1/pt-br/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-1 — Padrão Básico de Codificação</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><b>Brazilian Portuguese</b></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="../it/index.html">Italian</a></li>
+      
+    
+      
+        <li><a href="../ru/index.html">Russian</a></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><a href="../es/index.html">Spanish</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="padrão-básico-de-codificação">Padrão Básico de Codificação</h1>
+
+<p>Esta seção do padrão é constituída do que deveriam ser considerados os elementos do padrão de codificação que é requerido para assegurar um alto nível de interoperabilidade técnica entre códigos PHP compartilhados.</p>
+
+<p>As palavras chave &quot;DEVE&quot;, &quot;NÃO DEVE&quot;, &quot;OBRIGATÓRIO&quot;, &quot;TEM QUE&quot;, &quot;NÃO TEM QUE&quot;, &quot;DEVERIA&quot;, &quot;NÃO DEVERIA&quot;, &quot;RECOMENDADO&quot;, &quot;PODE&quot; e &quot;OPCIONAL&quot; existentes neste documento devem ser interpretadas como são descritas no <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+
+<h2 id="1-visão-geral">1. Visão Geral</h2>
+
+<ul>
+<li><p>Arquivos DEVEM usar somente as tags <code>&lt;?php</code> e <code>&lt;?=</code>.</p></li>
+<li><p>Arquivos DEVEM usar somente a codificação UTF-8 sem BOM para códigos PHP.</p></li>
+<li><p>Arquivos DEVERIAM <em>ou</em> declarar símbolos (classes, funções, constantes, etc.)
+<em>ou</em> causar efeitos colaterais (e.g. gerar output, modificar configurações no php.ini, etc.), mas NÃO DEVERIAM fazer ambos.</p></li>
+<li><p>Namespaces e classes DEVEM seguir <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md">PSR-0</a>.</p></li>
+<li><p>Nomes de classes DEVEM ser declaradas em <code>StudlyCaps</code>.</p></li>
+<li><p>Constantes de classes DEVEM ser declaradas totalmente com letras maiúsculas e separadas por underscores.</p></li>
+<li><p>Nomes de métodos DEVEM ser declarados em <code>camelCase</code>.</p></li>
+</ul>
+
+<h2 id="2-arquivos">2. Arquivos</h2>
+
+<h3 id="2-1-tags-php">2.1. Tags PHP</h3>
+
+<p>Códigos PHP DEVEM utilizar as tags longas <code>&lt;?php ?&gt;</code> ou as tags de short-echo <code>&lt;?= ?&gt;</code>; NÃO DEVEM utilizar mais nenhuma variação de tags.</p>
+
+<h3 id="2-2-codificação-de-caracteres">2.2. Codificação de Caracteres</h3>
+
+<p>Códigos PHP DEVEM utilizar somente UTF-8 sem BOM.</p>
+
+<h3 id="2-3-efeitos-colaterais">2.3. Efeitos Colaterais</h3>
+
+<p>Um arquivo DEVERIA declarar novos simbolos (classes, funções, constantes, etc.) e causar mais nenhum efeito colateral, ou DEVERIA executar lógica com efeitos colaterais, mas NÃO DEVERIA fazer ambos.</p>
+
+<p>O termo &quot;efeitos colaterais&quot; significa execução de lógica não diretamente relacionada à declarar classes, funções, constantes, etc., <em>meramente por incluir o arquivo</em>.</p>
+
+<p>&quot;Efeitos colaterais&quot; incluem, mas não são limitadas à: gerar output, utilização explícita de <code>require</code> ou <code>include</code>, conectar à serviços externos, modificar configurações no php.ini, emissão de erros ou exceções, modificar variáveis globais ou estáticas, lendo de ou escrevendo em um arquivo, etc.</p>
+
+<p>A seguir um exemplo de um arquivo com declarações e efeitos colaterais; ou seja um exemplo do que evitar:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="c1">// efeito colateral: mofificar php.ini</span>
+<span class="nb">ini_set</span><span class="p">(</span><span class="s1">&#39;error_reporting&#39;</span><span class="p">,</span> <span class="k">E_ALL</span><span class="p">);</span>
+
+<span class="c1">// efeito colateral: carregar um arquivo</span>
+<span class="k">include</span> <span class="s2">&quot;file.php&quot;</span><span class="p">;</span>
+
+<span class="c1">// efeito colateral: gerar output</span>
+<span class="k">echo</span> <span class="s2">&quot;&lt;html&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+
+<span class="c1">// declaração</span>
+<span class="k">function</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// corpo da função</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>A seguir um exemplo de um arquivo que contém somente declarações; ou seja, um exemplo do que seguir:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="c1">// declaração</span>
+<span class="k">function</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// corpo da função</span>
+<span class="p">}</span>
+
+<span class="c1">// declaração condicional não é um &quot;efeito colateral&quot;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="nf">bar</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// corpo da função</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="3-nomes-de-namespaces-and-classes">3. Nomes de Namespaces and Classes</h2>
+
+<p>Namespaces e classes DEVEM seguir a <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md">PSR-0</a>.</p>
+
+<p>Isto significa que cada classe está contida em seu próprio arquivo, e em seu próprio namespace de no mínimo um nível: um nível raíz de nome do vendor.</p>
+
+<p>Nomes de classes DEVEM ser declaradas em<code>StudlyCaps</code>.</p>
+
+<p>Códigos escritos para PHP 5.3 e acima, DEVEM utilizar namespaces formais.</p>
+
+<p>Por exemplo:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="c1">// PHP 5.3 e acima:</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Foo</span>
+<span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Códigos escritos para PHP 5.2.x e abaixo, DEVERIAM utilizar a convenção de pseudo-namespace de prefixos <code>Vendor_</code> em nomes de classes.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="c1">// PHP 5.2.x e abaixo:</span>
+<span class="k">class</span> <span class="nc">Vendor_Model_Foo</span>
+<span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="4-constantes-de-classes-propriedades-e-métodos">4. Constantes de Classes, Propriedades e Métodos</h2>
+
+<p>O termo &quot;classes&quot; se refere a todas as classes, interfaces e traits.</p>
+
+<h3 id="4-1-constantes">4.1. Constantes</h3>
+
+<p>Constantes de classes DEVEM ser declaradas totalmente com letras maiúsculas separadas pelo underscore.
+Por exemplo:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Foo</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="no">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">DATE_APPROVED</span> <span class="o">=</span> <span class="s1">&#39;2012-06-01&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-2-propriedades">4.2. Propriedades</h3>
+
+<p>Este guia intencionalmente evita qualquer recomentação em relação ao uso de nomes de propriedades utilizando <code>$StudlyCaps</code>, <code>$camelCase</code> ou <code>$under_score</code>.</p>
+
+<p>Qualquer que seja a convenção de nomeação utilizada, esta DEVE ser aplicada consistentemente dentro de um escopo rasoável. Este escopo podendo ser à nível de vendor, pacotes, classes ou métodos.</p>
+
+<h3 id="4-3-métodos">4.3. Métodos</h3>
+
+<p>Nomes de métodos DEVEM ser declaradas em <code>camelCase()</code>.</p>
+
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../../psr-4/index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-1/pt-br/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+</html>

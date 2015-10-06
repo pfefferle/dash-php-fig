@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-4/ru/meta/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-4 метадокумент</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="psr-4-метадокумент">PSR-4 метадокумент</h1>
+
+<h2 id="1-Обзор">1. Обзор</h2>
+
+<p>Цель — определить правила для взаимозаменяемого автозагрузчика для PHP, который
+ставит в соответствие пространства имён и пути в файловой системе, и может сосуществовать с любым другим
+зарегистрированным через SPL автозагрузчиком. Правила должны быть не заменой PSR-0, а дополнением к нему.</p>
+
+<h2 id="2-Зачем-всё-это">2. Зачем всё это?</h2>
+
+<h3 id="История-psr-0">История PSR-0</h3>
+
+<p>Стандарт именования классов и автозагрузки PSR-0 появился под влиянием широкого использования
+соглашений Horde/PEAR и ограничений, накладываемых PHP версии 5.2 и старше. Согласно этим
+соглашениям все классы размещались в одной главной директории и использовали символы подчёркивания
+в имени для псевдопространств имён:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">/path/to/src/
+    VendorFoo/
+        Bar/
+            Baz.php     # VendorFoo_Bar_Baz
+    VendorDib/
+        Zim/
+            Gir.php     # Vendor_Dib_Zim_Gir
+</code></pre></div>
+<p>Вышел PHP 5.3 с полноценными пространствами имён. PSR-0 всё ещё
+позволял как старое именование с подчёркиваниями в стиле Horde/PEAR <em>так и</em>
+использование настоящих пространств имён. Для более плавного перехода
+к новому именованию символы подчёркивания всё ещё разрешалось
+использовать в имени класса. Это было необходимо для более широкого распространения.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">/path/to/src/
+    VendorFoo/
+        Bar/
+            Baz.php     # VendorFoo_Bar_Baz
+    VendorDib/
+        Zim/
+            Gir.php     # VendorDib_Zim_Gir
+    Irk_Operation/
+        Impending_Doom/
+            V1.php
+            V2.php      # Irk_Operation\Impending_Doom\V2
+</code></pre></div>
+<p>Данная структура создавалась под воздействием того факта, что PEAR копировал исходные файлы из пакетов в одну
+центральную директорию.</p>
+
+<h3 id="И-тут-появился-composer">И тут появился Composer</h3>
+
+<p>С приходом Composer исходные файлы пакетов перестали копироваться в единственную глобальную директорию. Вместо этого
+они используются оттуда, куда были установлены. Это означает что в случае Composer какой-либо &quot;главной директории&quot; для
+PHP кода, как это было в случае PEAR, нет. Вместо этого имеются несколько директорий. Каждый пакет находится в отдельной
+директории для каждого проекта.</p>
+
+<p>Чтобы при этом соответствовать PSR-0, пакет Composer выглядит вот так:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vendor/
+    vendor_name/
+        package_name/
+            src/
+                Vendor_Name/
+                    Package_Name/
+                        ClassName.php       # Vendor_Name\Package_Name\ClassName
+            tests/
+                Vendor_Name/
+                    Package_Name/
+                        ClassNameTest.php   # Vendor_Name\Package_Name\ClassNameTest
+</code></pre></div>
+<p>Директории &quot;src&quot; и &quot;tests&quot; обязаны включать в себя директории с именем производителя и именем пакета, что является
+следствием соблюдения PSR-0.</p>
+
+<p>Многие находят данную структуру излишне вложенной и включающей слишком много повторений и предлагают разрботать
+новый PSR или дополнить существующий таким образом, чтобы пакеты выглядили примерно так:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vendor/
+    vendor_name/
+        package_name/
+            src/
+                ClassName.php       # Vendor_Name\Package_Name\ClassName
+            tests/
+                ClassNameTest.php   # Vendor_Name\Package_Name\ClassNameTest
+</code></pre></div>
+<p>Это бы потребовало реализации того, что изначально называлось &quot;пакетно-ориентированная автозагрузка&quot; (в противовес
+традиционной &quot;загрузки с преобразованием класса в имя файла&quot;).</p>
+
+<h3 id="Пакетно-ориентированная-автозагрузка">Пакетно-ориентированная автозагрузка</h3>
+
+<p>Довольно сложно реализовать пакетно-ориентированную автозагрузку в виде расширения
+или дополнения к PSR-0 потому как PSR-0 не допускает пересечений путей для любых частях
+имени класса. То есть реализация пакетно-ориентированного автозагрузчика была бы
+более сложной, чем PSR-0. Тем не менее, она бы позволила использовать более простую
+структуру пакетов.</p>
+
+<p>Изначально были предложены следующие правила:</p>
+
+<ol>
+<li><p>Реализации ДОЛЖНЫ использовать как минимум два уровня в пространстве имён: имя производителя и
+название пакета этого производителя. (Эта комбинация из двух имён верхнего уровня далее называется
+имя производителя-пакета или пространство имён производителя-пакета.)</p></li>
+<li><p>Реализации ДОЛЖНЫ позволять использовать путь между именем производителя-пакета и оставшейся
+частью абсолютного имени класса.</p></li>
+<li><p>Имя производителя-пакета МОЖЕТ соответствовать любой директории. Оставшаяся часть абсолютного
+имени класса ДОЛЖНА сопоставлять пространства имён одноимённым директориям. Имя класса ДОЛЖНО
+соответствовать одноимённому файлу, заканчивающемуся .php.</p></li>
+</ol>
+
+<p>Стоит отетить, что это отменяет использование подчёркивания в качестве
+разделителя директории в имени класса. Можно подумать, что подчёркивания
+должны остаться в соответствии с PSR-0, но так как их использование изначально
+было введено для перехода с PHP 5.2 и псевдопространств имён, допустимо убрать
+их на этом этапе.</p>
+
+<h2 id="3-Рамки">3. Рамки</h2>
+
+<h3 id="3-1-Цели">3.1 Цели</h3>
+
+<ul>
+<li><p>Сохранить правило PSR-0, гласящее о том, что реализации ДОЛЖНЫ использовать как минимум
+два уровня пространства имён: имя производителя и имя пакета этого производителя.</p></li>
+<li><p>Позволить использовать путь между именем производителя-пакета и остатком абсолютного
+имени класса.</p></li>
+<li><p>Сделать так, чтобы имя производителя-пакета МОГЛО соответствовать любой директории и, возможно,
+нескольким директориям.</p></li>
+<li><p>Отменить использование символов подчёркивания в качестве разделителей директорий в именах классов.</p></li>
+</ul>
+
+<h3 id="3-2-Не-цели">3.2 Не цели</h3>
+
+<ul>
+<li>Предоставить общий алгоритм преобразования для ресурсов, не являющихся классами</li>
+</ul>
+
+<h2 id="4-Подходы">4. Подходы</h2>
+
+<h3 id="4-1-Выбранный-подход">4.1 Выбранный подход</h3>
+
+<p>Данный подход сохраняет ключевые характеристики PSR-0 при этом устраняя вложенность
+директорий, которую он требует. В дополнение, он задаёт дополнительные правила,
+которые позволяют реализациям быть в большей степени взаимозаменяемыми.</p>
+
+<p>Несмотря на то, что это не относится к соответствию директорий, финальный черновик также
+задаёт порядок работы автозагрузчиков с ошибками.  А именно, запрещает выкидывать
+исключения и вызывать ошибки. На это есть две причины:</p>
+
+<ol>
+<li><p>Автозагрузчики в PHP изначально разработаны чтобы использоваться вместе. То есть если один
+загрузчик не может загрузить класс, другой имеет все шансы на успех. Автозагрузчик, который
+вызывает ошибку, нарушает эту совместимость.</p></li>
+<li><p>Для <code>class_exists()</code> и <code>interface_exists()</code> &quot;не найдено даже после попытки автозагрузки&quot; — нормальная
+ситуация. Автозагрузчик, выкидывающий исключения, делает <code>class_exists()</code> непригодным для использования,
+что совершенно недопустимо с точки зрения взаимозаменяемости. Автозагрузчики, которые хотят предоставить
+дополнительную отладочную информацию в случае не найденного класса должны делать это при помощи логирования.
+Либо при помощи совместимой с PSR-3 библиотеки, либо иначе.</p></li>
+</ol>
+
+<p>Плюсы:</p>
+
+<ul>
+<li>Меньше вложенность директорий.</li>
+<li>Более гибкое расположение файлов.</li>
+<li>Подчёркивания в имени класса больше не используются как разделитель директорий.</li>
+<li>Реализации становятся заметно более взаимозаменяемыми.</li>
+</ul>
+
+<p>Минусы:</p>
+
+<ul>
+<li>Невозможно, как в случае PSR-0, однозначно определить положение класса в файловой ситеме по его имени
+(то есть отсутствует соглашние о сопоставлении &quot;класс-файл&quot; из Horde/PEAR).</li>
+</ul>
+
+<h3 id="4-2-Альтернатива-оставить-только-psr-0">4.2 Альтернатива: оставить только PSR-0</h3>
+
+<p>Использование только PSR-0 хоть и логично, но оставляет нас с более вложенными директориями.</p>
+
+<p>Плюсы:</p>
+
+<ul>
+<li>Не нужно менять привычки и реализации.</li>
+</ul>
+
+<p>Минусы:</p>
+
+<ul>
+<li>Всё та же большая вложенность директорий.</li>
+<li>Подчёркивания в имени класса используются как разделитель директорий.</li>
+</ul>
+
+<h3 id="4-3-Альтернатива-разделить-автозагрузку-и-преобразование">4.3 Альтернатива: разделить автозагрузку и преобразование</h3>
+
+<p>Beau Simensen и другие предложили выделить алгоритм преобразования из стандарта
+автозагрузки в отдельный стандарт, на который можно было бы ссылаться.
+После проведения начальной работы по их разделению, последовавшего голосования и
+обсуждения, предпочтение было отдано комбинированной версии (т.е. правила
+преобразования остались в том же стандарте).</p>
+
+<p>Плюсы:</p>
+
+<ul>
+<li>На правила преобразования можно ссылаться из других стандартов.</li>
+</ul>
+
+<p>Минусы:</p>
+
+<ul>
+<li>Не соответствует результатам опроса и пожеланиям некоторых авторов.</li>
+</ul>
+
+<h3 id="4-4-Альтернатива-использование-более-простого-и-понятного-языка">4.4 Альтернатива: использование более простого и понятного языка</h3>
+
+<p>После того, как второе голосование было отозвано спонсором ввиду того, что
+голосовавшие хоть и отвечали +1 поддерживая идею, но не соглашались с формулировками
+в тексте (или не понимали их), наступил период в который язык текста был сделан
+более простым и понятным. У данного подхода всё ещё были противники. Спустя некторое время,
+Beau Simensen составил пробную версию в стиле PSR-0, которую за её лаконичность поддержали
+редактор и спонсоры. Далее она была доработана Paul M. Jones и многими другими.</p>
+
+<h3 id="Замечание-о-совместимости-с-php-5-3-2-и-ниже">Замечание о совместимости с PHP 5.3.2 и ниже</h3>
+
+<p>Версии PHP до 5.3.3 не удаляли завершающий разделитель пространства имён, поэтому это должна делать реализация.
+Если этого не сделать, поведение автозагрузчика может быть непредсказуемым.</p>
+
+<h2 id="5-Авторы">5. Авторы</h2>
+
+<h3 id="5-1-Редактор">5.1 Редактор</h3>
+
+<ul>
+<li>Paul M. Jones, Solar/Aura</li>
+</ul>
+
+<h3 id="5-2-Спонсоры">5.2 Спонсоры</h3>
+
+<ul>
+<li>Phil Sturgeon, PyroCMS (координатор)</li>
+<li>Larry Garfield, Drupal</li>
+</ul>
+
+<h3 id="5-3-Помощники">5.3 Помощники</h3>
+
+<ul>
+<li>Andreas Hennings</li>
+<li>Bernhard Schussek</li>
+<li>Beau Simensen</li>
+<li>Donald Gilbert </li>
+<li>Mike van Riel</li>
+<li>Paul Dragoonis</li>
+<li>Всех не перечислить, не пересчитать</li>
+</ul>
+
+<h2 id="6-Голосование">6. Голосование</h2>
+
+<ul>
+<li><p><strong>Начальное:</strong> <a href="https://groups.google.com/d/msg/php-fig/_LYBgfcEoFE/ZwFTvVTIl4AJ">https://groups.google.com/d/msg/php-fig/_LYBgfcEoFE/ZwFTvVTIl4AJ</a></p></li>
+<li><p><strong>Финальное:</strong></p>
+
+<ul>
+<li>Первая попытка: <a href="https://groups.google.com/forum/#!topic/php-fig/Ua46E344_Ls">https://groups.google.com/forum/#!topic/php-fig/Ua46E344_Ls</a>,
+предпринято до введения новых процедур голосования. Отменена из за того, что текст случайно поменяли.</li>
+<li>Вторая попытка: <a href="https://groups.google.com/forum/#!topic/php-fig/NWfyAeF7Psk">https://groups.google.com/forum/#!topic/php-fig/NWfyAeF7Psk</a>,
+отменена по инициативе спонсора <a href="https://groups.google.com/forum/#!topic/php-fig/t4mW2TQF7iE">https://groups.google.com/forum/#!topic/php-fig/t4mW2TQF7iE</a></li>
+<li>Третья попытка: TBD</li>
+</ul></li>
+</ul>
+
+<h2 id="7-Ссылки">7. Ссылки</h2>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/lpmJcmkNYjM">Autoloader, round 4</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/fGwA6XHlYhI">POLL: Autoloader: Split or Combined?</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/kUbzJAbHxmg">PSR-X autoloader spec: Loopholes, ambiguities</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/422dFBGs1Yc">Autoloader: Combine Proposals?</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/Y4xc71Q3YEQ">Package-Oriented Autoloader, Round 2</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/bnoiTxE8L28">Autoloader: looking again at namespace</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/SJTL1ec46II">DISCUSSION: Package-Oriented Autoloader - vote against</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/Ua46E344_Ls">VOTE: Package-Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/qT7mEy0RIuI">Proposal: Package-Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!searchin/php-fig/package$20oriented$20autoloader/php-fig/JdR-g8ZxKa8/jJr80ard-ekJ">Towards a Package Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/php-fig/oXr-2TU1lQY">List of Alternative PSR-4 Proposals</a></li>
+<li><a href="https://groups.google.com/forum/#!searchin/php-fig/psr-4$20summary/php-fig/bSTwUX58NhE/YPcFgBjwvpEJ">Summary of [post-Acceptance Vote pull] PSR-4 discussions</a></li>
+</ul>
+
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><a href="http://www.php-fig.org/psr/psr-4/ru">PSR-4 — Автозагрузчик</a></li>
+    
+    
+    
+    <li><b>PSR-4 метадокумент</b></li>
+    
+    
+    
+    <li><a href="http://www.php-fig.org/psr/psr-4/ru/examples">Примеры реализации PSR-4</a></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-0" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-1" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-2" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-3" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-4" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="http://www.php-fig.org/psr/psr-7" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-4/ru/meta/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+</html>

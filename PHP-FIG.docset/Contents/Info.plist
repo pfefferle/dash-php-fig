@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>phpfig</string>
+	<key>CFBundleName</key>
+	<string>PHP-FIG</string>
+	<key>DocSetPlatformFamily</key>
+	<string>phpfig</string>
+	<key>DashDocSetFamily</key>
+	<string>dashtoc</string>
+	<key>dashIndexFilePath</key>
+	<string>www.php-fig.org/index.html</string>
+	<key>isDashDocset</key>
+	<true/>
+</dict>
+</plist>

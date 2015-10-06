@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-2/ru/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-2 — Руководство по стилю кода</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><a href="../pt-br/index.html">Brazilian Portuguese</a></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="../it/index.html">Italian</a></li>
+      
+    
+      
+        <li><b>Russian</b></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><a href="../es/index.html">Spanish</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="Руководство-по-стилю-кода">Руководство по стилю кода</h1>
+
+<p>Данное руководство расширяет и дополняет основной стандарт кодирования <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>.</p>
+
+<p>Цель данного руководства — уменьшить когнитивное сопротивление при
+визуальном восприятии кода, написанного разными авторами. Для этого составлен
+список распространённых правил и ожиданий относительно форматирования
+PHP-кода.</p>
+
+<p>Представленные здесь стилистические правила получены на основе обобщения опыта
+различных проектов. При сотрудничестве разных авторов над множеством проектов,
+полезно применять единый набор руководящих принципов для этих проектов.
+Таким образом, польза данного руководства не в правилах, как таковых,
+а в их распространённости.</p>
+
+<p>Ключевые слова «НЕОБХОДИМО»/«ДОЛЖНО» («MUST»), «НЕДОПУСТИМО»/«НЕ ДОЛЖНО» («MUST NOT»), «ТРЕБУЕТСЯ»
+(«REQUIRED»), «НУЖНО» («SHALL»), «НЕ ПОЗВОЛЯЕТСЯ» («SHALL NOT»), «СЛЕДУЕТ»
+(«SHOULD»), «НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»),
+«ВОЗМОЖНО» («MAY») и «НЕОБЯЗАТЕЛЬНО» («OPTIONAL»)
+в этом документе должны расцениваться так, как описано в <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+
+<h2 id="1-Обзор">1. Обзор</h2>
+
+<ul>
+<li><p>НЕОБХОДИМО следовать &quot;руководству по стилю кода&quot; PSR [<a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>].</p></li>
+<li><p>Для отступов НЕОБХОДИМО использовать 4 пробела, а не табы.</p></li>
+<li><p>НЕДОПУСТИМО жёстко ограничивать длину строки; мягкое ограничение длины строки ДОЛЖНО быть 120
+символов; строки СЛЕДУЕТ делать не длиннее 80 символов.</p></li>
+<li><p>НЕОБХОДИМО оставлять одну пустую строку после объявления пространства имён (<code>namespace</code>), и 
+НЕОБХОДИМО оставлять одну пустую строку после блока операторов <code>use</code>.</p></li>
+<li><p>Открывающие фигурные скобки классов НЕОБХОДИМО переносить на следующую строку, а закрывающие фигурные скобки
+переносить на следующую строку после тела.</p></li>
+<li><p>Открывающие фигурные скобки методов НЕОБХОДИМО переносить на следующую строку, а закрывающие фигурные скобки
+переносить на следующую строку после тела.</p></li>
+<li><p>Видимость НЕОБХОДИМО объявлять для всех свойств и методов; <code>abstract</code> и
+<code>final</code> НЕОБХОДИМО ставить перед модификатором видимости; <code>static</code> НЕОБХОДИМО ставить
+после модификатора видимости.</p></li>
+<li><p>После ключевых слов управляющих структур НЕОБХОДИМО ставить один пробел;
+а после названий функций и методов НЕДОПУСТИМО.</p></li>
+<li><p>Открывающие фигурные скобки управляющих структур НЕОБХОДИМО оставлять на той же строке, а закрывающие фигурные скобки
+переносить на следующую строку после тела.</p></li>
+<li><p>НЕДОПУСТИМО ставить пробел после открывающих круглых скобок управляющих структур,
+и НЕДОПУСТИМО ставить пробел перед закрывающими круглыми скобками управляющих структур.</p></li>
+</ul>
+
+<h3 id="1-1-Пример">1.1. Пример</h3>
+
+<p>Этот пример даёт краткое представление о некоторых правилах, описанных ниже:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooInterface</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Foo</span> <span class="k">extends</span> <span class="nx">Bar</span> <span class="k">implements</span> <span class="nx">FooInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">sampleFunction</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="nv">$b</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$a</span> <span class="o">===</span> <span class="nv">$b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bar</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$a</span> <span class="o">&gt;</span> <span class="nv">$b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">BazClass</span><span class="o">::</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">final</span> <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">bar</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// тело метода</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="2-Общие-положения">2. Общие положения</h2>
+
+<h3 id="2-1-Основной-стандарт-кодирования">2.1 Основной стандарт кодирования</h3>
+
+<p>В коде НЕОБХОДИМО следовать правилам, описанным в <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>.</p>
+
+<h3 id="2-2-Файлы">2.2 Файлы</h3>
+
+<p>Во всех PHP файлах НЕОБХОДИМО использовать окончания строк LF (\n).</p>
+
+<p>Все PHP файлы НЕОБХОДИМО заканчивать одной пустой строкой.</p>
+
+<p>Закрывающий тэг <code>?&gt;</code> НЕОБХОДИМО удалять из файлов, содержащих только PHP.</p>
+
+<h3 id="2-3-Строки">2.3. Строки</h3>
+
+<p>НЕДОПУСТИМО жёстко ограничивать длину строки.</p>
+
+<p>Мягкое ограничение длины строки ДОЛЖНО быть 120 символов; автоматизированные
+проверятели стиля ДОЛЖНЫ предупреждать о нарушении мягкого ограничения,
+но не считать это ошибкой.</p>
+
+<p>НЕ СЛЕДУЕТ делать строки длиннее 80 символов; те строки, что длиннее СЛЕДУЕТ
+разбивать на несколько строк, не более 80 символов в каждой.</p>
+
+<p>НЕДОПУСТИМО оставлять пробелы в конце непустых строк.</p>
+
+<p>МОЖНО использовать пустые строки для улучшения читаемости и обозначения связанных блоков кода.</p>
+
+<p>НЕДОПУСТИМО писать на одной строке более одной инструкции.</p>
+
+<h3 id="2-4-Отступы">2.4. Отступы</h3>
+
+<p>В коде НЕОБХОДИМО использовать отступ в 4 пробела, и НЕДОПУСТИМО применять табы для отступов.</p>
+
+<blockquote>
+<p>N.b.: Использование одних пробелов, без примеси табов, помогает избежать
+проблем с диффами, патчами, историей и авторством строк. Использование пробелов
+так же позволяет легко и точно сделать межстрочное выравнивание.</p>
+</blockquote>
+
+<h3 id="2-5-Ключевые-слова-и-true-false-null">2.5. Ключевые слова и True/False/Null</h3>
+
+<p><a href="http://php.net/manual/en/reserved.keywords.php">Ключевые слова PHP</a> НЕОБХОДИМО писать в нижнем регистре.</p>
+
+<p>Константы PHP: <code>true</code>, <code>false</code>, и <code>null</code> НЕОБХОДИМО писать в нижнем регистре.</p>
+
+<h2 id="3-Пространства-имён-и-оператор-use">3. Пространства имён и оператор use</h2>
+
+<p>При наличии пространства имён (<code>namespace</code>), после его объявления необходимо оставть одну пустую строку.</p>
+
+<p>При наличии операторов <code>use</code>, НЕОБХОДИМО располагать их после объявления пространства имён.</p>
+
+<p>НЕОБХОДИМО использовать один оператор <code>use</code> на одно объявление (импорт или создание псевдонима).</p>
+
+<p>НЕОБХОДИМО оставлять одну пустую строку после блока операторов <code>use</code>.</p>
+
+<p>Например:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooClass</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="c1">// ... additional PHP code ...</span>
+</code></pre></div>
+<h2 id="4-Классы-свойства-и-методы">4. Классы, свойства и методы</h2>
+
+<p>Слово &quot;класс&quot; относится ко всем классам, интерфейсам и трейтам.</p>
+
+<h3 id="4-1-extends-и-implements">4.1. Extends и implements</h3>
+
+<p>Ключевые слова <code>extends</code> и <code>implements</code> НЕОБХОДИМО располагать на одной
+строке с именем класса.</p>
+
+<p>Открывающую фигурную скобку класса НЕОБХОДИМО переносить на следующую строку;
+закрывающую фигурную скобку класса НЕОБХОДИМО располагать на следующей строке
+после тела класса.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooClass</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span> <span class="k">extends</span> <span class="nx">ParentClass</span> <span class="k">implements</span> <span class="nx">\ArrayAccess</span><span class="p">,</span> <span class="nx">\Countable</span>
+<span class="p">{</span>
+    <span class="c1">// константы, свойства, методы</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Список <code>implements</code> МОЖНО разбить на несколько строк, каждая из которых
+с одним отступом. При этом, первый интерфейс в списке НЕОБХОДИМО перенести
+на следующую строку, и в каждой строке НЕОБХОДИМО указать только один интерфейс.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooClass</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span> <span class="k">extends</span> <span class="nx">ParentClass</span> <span class="k">implements</span>
+    <span class="nx">\ArrayAccess</span><span class="p">,</span>
+    <span class="nx">\Countable</span><span class="p">,</span>
+    <span class="nx">\Serializable</span>
+<span class="p">{</span>
+    <span class="c1">// константы, свойства, методы</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-2-Свойства">4.2. Свойства</h3>
+
+<p>Видимость НЕОБХОДИМО объявлять для всех свойств;</p>
+
+<p>Использовать ключевое слово <code>var</code> для обхявления свойств НЕДОПУСТИМО.</p>
+
+<p>НЕДОПУСТИМО в одном объявлении указвать более одного свойства.</p>
+
+<p>НЕ СЛЕДУЕТ начинать название свойства с подчёркивания для обозначения приватной
+или защищённой видимости.</p>
+
+<p>Объявление свойства выглядит как показано ниже.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$foo</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-3-Методы">4.3. Методы</h3>
+
+<p>Видимость НЕОБХОДИМО объявлять для всех методов;</p>
+
+<p>НЕ СЛЕДУЕТ начинать название метода с подчёркивания для обозначения приватной
+или защищённой видимости.</p>
+
+<p>НЕДОПУСТИМО объявлять методы с пробелом после названия метода. Открывающую
+фигурную скобку НЕОБХОДИМО располагать на отдельной строке; закрывающую
+фигурную скобку НЕОБХОДИМО располагать на следующей строке после тела метода.
+НЕДОПУСТИМО оставлять пробел после открывающей круглой скобки и перед закрывающей.</p>
+
+<p>Объявление метода выглядит как показано ниже. Обратите внимание на расположение
+запятых, пробелов, круглых, квадратных и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">fooBarBaz</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span> <span class="o">=</span> <span class="p">[])</span>
+    <span class="p">{</span>
+        <span class="c1">// тело метода</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-4-Аргументы-методов">4.4. Аргументы методов</h3>
+
+<p>В списке аргументов НЕДОПУСТИМЫ пробелы перед запятыми, и НЕОБХОДИМ один пробел
+после каждой запятой.</p>
+
+<p>Аргументы метода со значениями по-умолчанию НЕОБХОДИМО располагать в конце
+списка аргументов.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span> <span class="o">=</span> <span class="p">[])</span>
+    <span class="p">{</span>
+        <span class="c1">// тело метода</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Список аргументов МОЖНО разбить на несколько строк, каждая из которых
+с одним отступом. При этом, первый аргумент в списке НЕОБХОДИМО перенести
+на следующую строку, и в каждой строке НЕОБХОДИМО указать только один аргумент.</p>
+
+<p>Когда список аргументов разбит на несколько строк, закрывающую круглую скобку
+и открывающую фигурную НЕОБХОДИМО располагать на одной отдельной строке, с
+одним пробелом между ними.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">aVeryLongMethodName</span><span class="p">(</span>
+        <span class="nx">ClassTypeHint</span> <span class="nv">$arg1</span><span class="p">,</span>
+        <span class="o">&amp;</span><span class="nv">$arg2</span><span class="p">,</span>
+        <span class="k">array</span> <span class="nv">$arg3</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// тело метода</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-5-abstract-final-и-static">4.5. <code>abstract</code>, <code>final</code> и <code>static</code></h3>
+
+<p>При наличии, ключевых слов <code>abstract</code> и <code>final</code>, НЕОБХОДИМО чтобы они
+предшествовали модификаторам видимости.</p>
+
+<p>При наличии, ключевого слова <code>static</code>, НЕОБХОДИМО чтобы оно слеовало за
+модификатором видимости.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">abstract</span> <span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="nv">$foo</span><span class="p">;</span>
+
+    <span class="k">abstract</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">zim</span><span class="p">();</span>
+
+    <span class="k">final</span> <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">bar</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// тело метода</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-6-Вызовы-функций-и-методов">4.6. Вызовы функций и методов</h3>
+
+<p>При вызове метода или функции НЕДОПУСТИМЫ пробелы между названием метода или
+функции открывающей круглой скобкой, а так же НЕДОПУСТИМЫ пробелы после
+открывающей круглой скобки и перед закрывающей. В списке аргументов НЕДОПУСТИМЫ
+пробелы перед запятыми, и НЕОБХОДИМ один пробел после каждой запятой.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nx">bar</span><span class="p">();</span>
+<span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">);</span>
+<span class="nx">Foo</span><span class="o">::</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span><span class="p">);</span>
+</code></pre></div>
+<p>Список аргументов МОЖНО разбить на несколько строк, каждая из которых
+с одним отступом. При этом, первый аргумент в списке НЕОБХОДИМО перенести
+на следующую строку, и в каждой строке НЕОБХОДИМО указать только один аргумент.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">);</span>
+</code></pre></div>
+<h2 id="5-Управляюшие-структуры">5. Управляюшие структуры</h2>
+
+<p>Общие правила стиля для управляющих структур таковы:</p>
+
+<ul>
+<li>После ключевого слова управляющей структуры НЕОБХОДИМ один пробел</li>
+<li>После открывающей круглой скобки пробел НЕДОПУСТИМ</li>
+<li>Перед закрывающей круглой скобкой пробел НЕДОПУСТИМ</li>
+<li>НЕОБХОДИМ один пробел между закрывающей круглой скобкой и открывающей
+фигурной скобкой</li>
+<li>Тело управляющей структуры НЕОБХОДИМО смещать на один отступ</li>
+<li>Закрывающую фигурную скобку НЕОБХОДИМО располагать на следующей строке после тела</li>
+</ul>
+
+<p>Тело каждой управляющей структуры НЕОБХОДИМО заключать в фигурные скобки. Это
+стандартизирует вид управляющих структур и уменьшает вероятность возникновения
+ошибок при добавлении новых строк в тело.</p>
+
+<h3 id="5-1-if-elseif-else">5.1. <code>if</code>, <code>elseif</code>, <code>else</code></h3>
+
+<p>Управляющая структура <code>if</code> выглядит как показано ниже. Обратите внимание
+на расположение пробелов, круглых и фигурных скобок; и что <code>else</code> и <code>elseif</code>
+расположены на одной строке с закрывающей фигурной скобкой предыдущего тела.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$expr1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// тело if</span>
+<span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$expr2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// тело elseif</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// тело else;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Вместо <code>else if</code> СЛЕДУЕТ использовать <code>elseif</code> чтобы все ключевые слова
+управляющих структур выглядели как одно слово.</p>
+
+<h3 id="5-2-switch-case">5.2. <code>switch</code>, <code>case</code></h3>
+
+<p>Управляющая структура <code>switch</code> выглядит как показано ниже. Обратите внимание
+на расположение пробелов, круглых и фигурных скобок: Выражение <code>case</code>
+НЕОБХОДИМО смещать на один отсуп от <code>switch</code>, а ключевое слово <code>break</code> (или
+другое завершающее ключевое слово) НЕОБХОДИМО смещать на тот же уровень, что
+и тело <code>case</code>. При умышленном проваливании из непустого <code>case</code> НЕОБХОДИМ 
+комментарий вроде <code>// no break</code>.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">switch</span> <span class="p">(</span><span class="nv">$expr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Первый case, заканчивается на break&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Второй case, с умышленным проваливанием&#39;</span><span class="p">;</span>
+        <span class="c1">// no break</span>
+    <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+    <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+    <span class="k">case</span> <span class="mi">4</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Третий case, завершается словом return вместо break&#39;</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;По-умолчанию&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="5-3-while-do-while">5.3. <code>while</code>, <code>do while</code></h3>
+
+<p>Управляющая структура <code>while</code> выглядит как показано ниже. Обратите внимание
+на расположение пробелов, круглых и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">while</span> <span class="p">(</span><span class="nv">$expr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// structure body</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Аналогично, управляющая структура <code>do while</code> выглядит как показано ниже.
+Обратите внимание на расположение пробелов, круглых и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">do</span> <span class="p">{</span>
+    <span class="c1">// structure body;</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nv">$expr</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="5-4-for">5.4. <code>for</code></h3>
+
+<p>Управляющая структура <code>for</code> выглядит как показано ниже. Обратите внимание
+на расположение пробелов, круглых и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// тело for</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="5-5-foreach">5.5. <code>foreach</code></h3>
+
+<p>Управляющая структура <code>foreach</code> выглядит как показано ниже. Обратите внимание
+на расположение пробелов, круглых и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$iterable</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// тело foreach</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="5-6-try-catch">5.6. <code>try</code>, <code>catch</code></h3>
+
+<p>Блок <code>try catch</code> выглядит как показано ниже. Обратите внимание на расположение
+пробелов, круглых и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">try</span> <span class="p">{</span>
+     <span class="c1">// тело try</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">FirstExceptionType</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// тело catch</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">OtherExceptionType</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// catch body</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="6-Замыкания">6. Замыкания</h2>
+
+<p>В объявлении замыкания НЕОБХОДИМ пробел после ключевого слова <code>function</code>,
+а так же до и после ключевого слова <code>use</code>.</p>
+
+<p>Открывающую фигурную скобку НЕОБХОДИМО располагать на той же строке;
+закрывающую фигурную скобку НЕОБХОДИМО располагать на следующей строке после
+тела замыкания.</p>
+
+<p>НЕДОПУСТИМЫ пробелы после открывающей круглой скобки списка аргументов или
+переменных, и НЕДОПУСТИМЫ пробелы перед закрывающей круглой скобкой списка
+аргументов или переменных.</p>
+
+<p>В списке аргументов и в списке переменных НЕДОПУСТИМЫ пробелы перед запятыми,
+и НЕОБХОДИМ один пробел после каждой запятой.</p>
+
+<p>Аргументы замыкания со значениями по-умолчанию НЕОБХОДИМО располагать в конце
+списка аргументов.</p>
+
+<p>Объявление замыкания выглядит как показано ниже. Обратите внимание на
+расположение запятых, пробелов, круглых, квадратных и фигурных скобок:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$closureWithArgs</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="nv">$arg2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// тело</span>
+<span class="p">};</span>
+
+<span class="nv">$closureWithArgsAndVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="nv">$arg2</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$var1</span><span class="p">,</span> <span class="nv">$var2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// body</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Список аргументов и список переменных МОЖНО разбить на несколько строк, каждая
+из которых с одним отсупом. При этом, первый элемент в списке НЕОБХОДИМО
+перенести на следующую строку, и в каждой строке НЕОБХОДИМО указать только один
+аргумент или одну переменную.</p>
+
+<p>Когда последний список (или аргументов, или переменных) разбит на несколько
+строк, закрывающую круглую скобку и открывающую фигурную НЕОБХОДИМО
+располагать на одной отдельной строке, с одним пробелом между ними.</p>
+
+<p>Ниже показаны примеры замыканий с аргументами и без, а так же со списком
+свободных переменных на несколько строк.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$longArgs_noVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// тело</span>
+<span class="p">};</span>
+
+<span class="nv">$noArgs_longVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span>
+    <span class="nv">$longVar1</span><span class="p">,</span>
+    <span class="nv">$longerVar2</span><span class="p">,</span>
+    <span class="nv">$muchLongerVar3</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// тело</span>
+<span class="p">};</span>
+
+<span class="nv">$longArgs_longVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">)</span> <span class="k">use</span> <span class="p">(</span>
+    <span class="nv">$longVar1</span><span class="p">,</span>
+    <span class="nv">$longerVar2</span><span class="p">,</span>
+    <span class="nv">$muchLongerVar3</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// тело</span>
+<span class="p">};</span>
+
+<span class="nv">$longArgs_shortVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$var1</span><span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// тело</span>
+<span class="p">};</span>
+
+<span class="nv">$shortArgs_longVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span>
+    <span class="nv">$longVar1</span><span class="p">,</span>
+    <span class="nv">$longerVar2</span><span class="p">,</span>
+    <span class="nv">$muchLongerVar3</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// body</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Обратите внимание, правила форматирования так же применяются, когда замыкание
+используется напрямую в качестве аргумента при вызове метода или функции.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span>
+    <span class="nv">$arg1</span><span class="p">,</span>
+    <span class="k">function</span> <span class="p">(</span><span class="nv">$arg2</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$var1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// body</span>
+    <span class="p">},</span>
+    <span class="nv">$arg3</span>
+<span class="p">);</span>
+</code></pre></div>
+<h2 id="7-Заключение">7. Заключение</h2>
+
+<p>Многие элементы стиля и практики были преднамеренно опущены в данном руководстве.
+Вот некоторые из них:</p>
+
+<ul>
+<li><p>Объявление глобальных переменных и глобальных констант</p></li>
+<li><p>Объявление функций</p></li>
+<li><p>Операторы и присваивание</p></li>
+<li><p>Выравнивание внутри строк</p></li>
+<li><p>Комментарии и блоки документации</p></li>
+<li><p>Префиксы и суффиксы в названиях классов</p></li>
+<li><p>Лучшие практики</p></li>
+</ul>
+
+<p>Будущие рекоммендации МОГУТ исправлять и расширять данное руководство,
+обращаясь к этим или другим элементам стиля и практикам.</p>
+
+<h2 id="Дополнение-a-Исследование">Дополнение A. Исследование</h2>
+
+<p>При написании данного руководства, группа авторов провела исследование по
+выявлению общих практик в проектах участниках.  Это исследование сохранено
+здесь для потомков.</p>
+
+<h3 id="a-1-Данные-исследования">A.1. Данные исследования</h3>
+<div class="highlight"><pre><code class="language-text" data-lang="text">url,http://www.horde.org/apps/horde/docs/CODING_STANDARDS,http://pear.php.net/manual/en/standards.php,http://solarphp.com/manual/appendix-standards.style,http://framework.zend.com/manual/en/coding-standard.html,http://symfony.com/doc/2.0/contributing/code/standards.html,http://www.ppi.io/docs/coding-standards.html,https://github.com/ezsystems/ezp-next/wiki/codingstandards,http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html,https://github.com/UnionOfRAD/lithium/wiki/Spec%3A-Coding,http://drupal.org/coding-standards,http://code.google.com/p/sabredav/,http://area51.phpbb.com/docs/31x/coding-guidelines.html,https://docs.google.com/a/zikula.org/document/edit?authkey=CPCU0Us&amp;hgd=1&amp;id=1fcqb93Sn-hR9c0mkN6m_tyWnmEvoswKBtSc0tKkZmJA,http://www.chisimba.com,n/a,https://github.com/Respect/project-info/blob/master/coding-standards-sample.php,n/a,Object Calisthenics for PHP,http://doc.nette.org/en/coding-standard,http://flow3.typo3.org,https://github.com/propelorm/Propel2/wiki/Coding-Standards,http://developer.joomla.org/coding-standards.html
+voting,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,no,no,no,?,yes,no,yes
+indent_type,4,4,4,4,4,tab,4,tab,tab,2,4,tab,4,4,4,4,4,4,tab,tab,4,tab
+line_length_limit_soft,75,75,75,75,no,85,120,120,80,80,80,no,100,80,80,?,?,120,80,120,no,150
+line_length_limit_hard,85,85,85,85,no,no,no,no,100,?,no,no,no,100,100,?,120,120,no,no,no,no
+class_names,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,lower_under,studly,lower,studly,studly,studly,studly,?,studly,studly,studly
+class_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,next,next,next,next,next,next,same,next,next
+constant_names,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper
+true_false_null,lower,lower,lower,lower,lower,lower,lower,lower,lower,upper,lower,lower,lower,upper,lower,lower,lower,lower,lower,upper,lower,lower
+method_names,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,lower_under,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel
+method_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,same,next,next,next,next,next,same,next,next
+control_brace_line,same,same,same,same,same,same,next,same,same,same,same,next,same,same,next,same,same,same,same,same,same,next
+control_space_after,yes,yes,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
+always_use_control_braces,yes,yes,yes,yes,yes,yes,no,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes
+else_elseif_line,same,same,same,same,same,same,next,same,same,next,same,next,same,next,next,same,same,same,same,same,same,next
+case_break_indent_from_switch,0/1,0/1,0/1,1/2,1/2,1/2,1/2,1/1,1/1,1/2,1/2,1/1,1/2,1/2,1/2,1/2,1/2,1/2,0/1,1/1,1/2,1/2
+function_space_after,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no
+closing_php_tag_required,no,no,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,no,no,yes,no,no
+line_endings,LF,LF,LF,LF,LF,LF,LF,LF,?,LF,?,LF,LF,LF,LF,?,,LF,?,LF,LF,LF
+static_or_visibility_first,static,?,static,either,either,either,visibility,visibility,visibility,either,static,either,?,visibility,?,?,either,either,visibility,visibility,static,?
+control_space_parens,no,no,no,no,no,no,yes,no,no,no,no,no,no,yes,?,no,no,no,no,no,no,no
+blank_line_after_php,no,no,no,no,yes,no,no,no,no,yes,yes,no,no,yes,?,yes,yes,no,yes,no,yes,no
+class_method_control_brace,next/next/same,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/next,same/same/same,same/same/same,same/same/same,same/same/same,next/next/next,next/next/same,next/same/same,next/next/next,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/same,next/next/next
+</code></pre></div>
+<h3 id="a-2-Легенда-Исследования">A.2. Легенда Исследования</h3>
+
+<p><code>indent_type</code>:
+Тип отступов. <code>tab</code> = &quot;Используется таб&quot;, <code>2</code> or <code>4</code> = &quot;число пробелов&quot;</p>
+
+<p><code>line_length_limit_soft</code>:
+&quot;Мягкий&quot; лимит длины строки в символах. <code>?</code> = не определён, <code>no</code> нет лимита.</p>
+
+<p><code>line_length_limit_hard</code>:
+&quot;Жёсткий&quot; лимит длины строки в символах. <code>?</code> = не определён, <code>no</code> нет лимита.</p>
+
+<p><code>class_names</code>:
+Низвания классов. <code>lower</code> = только нижний регистр, <code>lower_under</code> = нижний регистр и подчёркивания, <code>studly</code> = StudlyCase.</p>
+
+<p><code>class_brace_line</code>:
+Открывающая фигурная скобка класса идёт на той же (<code>same</code>) строке, что и слово class, или на следующей (<code>next</code>)?</p>
+
+<p><code>constant_names</code>:
+Как пишутся названия констант классов? <code>upper</code> = В верхнем регистре с подчёркиваниями.</p>
+
+<p><code>true_false_null</code>:
+Ключевые слова <code>true</code>, <code>false</code> и <code>null</code> пишутся в нижнем (<code>lower</code>) или верхнем (<code>upper</code>) регистре?</p>
+
+<p><code>method_names</code>:
+Как пишутся названия методов? <code>camel</code> = <code>camelCase</code>, <code>lower_under</code> = в нижнем регистре с подчёркиваниями.</p>
+
+<p><code>method_brace_line</code>:
+Открывающая фигурная скобка метода идёт на той же (<code>same</code>) строке, что и слово class, или на следующей (<code>next</code>)?</p>
+
+<p><code>control_brace_line</code>:
+Открывающая фигурная скобка управляющей структуры идёт на той же (<code>same</code>) строке, что и слово class, или на следующей (<code>next</code>)?</p>
+
+<p><code>control_space_after</code>:
+Есть ли пробел после ключевого слова управляющей структуры?</p>
+
+<p><code>always_use_control_braces</code>:
+Всегда ли управляющие структуры используют фигурные скобки?</p>
+
+<p><code>else_elseif_line</code>:
+При использовании <code>else</code> или <code>elseif</code>, они располагаются на одной (<code>same</code>)
+строке с закрывающей фигурной скобкой или на следующей (<code>next</code>)?</p>
+
+<p><code>case_break_indent_from_switch</code>:
+Сколько горизонтальных отступов у <code>case</code> и <code>break</code> относительно <code>switch</code>?</p>
+
+<p><code>function_space_after</code>:
+Есть ли у вызова функции пробел между названием функции и открывающей круглой скобкой?</p>
+
+<p><code>closing_php_tag_required</code>:
+Требуется ли звкрывающий тэг <code>?&gt;</code> в файлах, содержащих только PHP?</p>
+
+<p><code>line_endings</code>:
+Тип окончаний строк?</p>
+
+<p><code>static_or_visibility_first</code>:
+При объявлении метода впереди идёт <code>static</code> или модификатор видимости? </p>
+
+<p><code>control_space_parens</code>:
+Есть ли пробелы внутри скобок управляющих структур? <code>yes</code> = <code>if ( $expr )</code>, <code>no</code> = <code>if ($expr)</code>.</p>
+
+<p><code>blank_line_after_php</code>:
+Есть ли пустая строка после открывающего тэга PHP?</p>
+
+<p><code>class_method_control_brace</code>:
+На какой строке пишется открывающая фигурная скобка класса, метода и управляющей структуры?</p>
+
+<h3 id="a-3-Результат-исследования">A.3. Результат исследования</h3>
+<div class="highlight"><pre><code class="language-text" data-lang="text">indent_type:
+    tab: 7
+    2: 1
+    4: 14
+line_length_limit_soft:
+    ?: 2
+    no: 3
+    75: 4
+    80: 6
+    85: 1
+    100: 1
+    120: 4
+    150: 1
+line_length_limit_hard:
+    ?: 2
+    no: 11
+    85: 4
+    100: 3
+    120: 2
+class_names:
+    ?: 1
+    lower: 1
+    lower_under: 1
+    studly: 19
+class_brace_line:
+    next: 16
+    same: 6
+constant_names:
+    upper: 22
+true_false_null:
+    lower: 19
+    upper: 3
+method_names:
+    camel: 21
+    lower_under: 1
+method_brace_line:
+    next: 15
+    same: 7
+control_brace_line:
+    next: 4
+    same: 18
+control_space_after:
+    no: 2
+    yes: 20
+always_use_control_braces:
+    no: 3
+    yes: 19
+else_elseif_line:
+    next: 6
+    same: 16
+case_break_indent_from_switch:
+    0/1: 4
+    1/1: 4
+    1/2: 14
+function_space_after:
+    no: 22
+closing_php_tag_required:
+    no: 19
+    yes: 3
+line_endings:
+    ?: 5
+    LF: 17
+static_or_visibility_first:
+    ?: 5
+    either: 7
+    static: 4
+    visibility: 6
+control_space_parens:
+    ?: 1
+    no: 19
+    yes: 2
+blank_line_after_php:
+    ?: 1
+    no: 13
+    yes: 8
+class_method_control_brace:
+    next/next/next: 4
+    next/next/same: 11
+    next/same/same: 1
+    same/same/same: 6
+</code></pre></div>
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><b>PSR-2 — Руководство по стилю кода</b></li>
+    
+    
+    
+    <li><a href="meta/index.html">PSR-2 Метадокумент</a></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../../psr-4/index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-2/ru/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-4/ru/examples/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>Примеры реализации PSR-4</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="Примеры-реализации-psr-4">Примеры реализации PSR-4</h1>
+
+<p>В примерах ниже показан совместимый с PSR-4 код:</p>
+
+<h2 id="С-использованием-замыкания">С использованием замыкания</h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Пример реализации для конкретного проекта.</span>
+<span class="sd"> * </span>
+<span class="sd"> * После регистрации этого автозагрузчика через SPL, следующая сточка</span>
+<span class="sd"> * заставит функцию попытаться загрузить класс \Foo\Bar\Baz\Qux</span>
+<span class="sd"> * из файла /path/to/project/src/Baz/Qux.php:</span>
+<span class="sd"> * </span>
+<span class="sd"> *      new \Foo\Bar\Baz\Qux;</span>
+<span class="sd"> *      </span>
+<span class="sd"> * @param string $class абсолютное имя класса.</span>
+<span class="sd"> * @return void</span>
+<span class="sd"> */</span>
+<span class="nb">spl_autoload_register</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$class</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// префикс пространства имён проекта</span>
+    <span class="nv">$prefix</span> <span class="o">=</span> <span class="s1">&#39;Foo\\Bar\\&#39;</span><span class="p">;</span>
+
+    <span class="c1">// базовая директория для этого префикса</span>
+    <span class="nv">$base_dir</span> <span class="o">=</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/src/&#39;</span><span class="p">;</span>
+
+    <span class="c1">// класс использует префикс?</span>
+    <span class="nv">$len</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">strncmp</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="nv">$class</span><span class="p">,</span> <span class="nv">$len</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// нет. Пусть попытается другой автозагрузчик</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// получаем относительное имя класса</span>
+    <span class="nv">$relative_class</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="nv">$len</span><span class="p">);</span>
+
+    <span class="c1">// заменяем префикс базовой директорией, заменяем разделители пространства имён</span>
+    <span class="c1">// на разделители директорий в относительном имени класса, добавляем .php</span>
+    <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$base_dir</span> <span class="o">.</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nv">$relative_class</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;.php&#39;</span><span class="p">;</span>
+
+    <span class="c1">// если файл существует, подключаем его</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$file</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">require</span> <span class="nv">$file</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="С-использованием-класса">С использованием класса</h2>
+
+<p>Ниже приведён пример реализации автозагрузчика, который поддерживает несколько пространств имён, в виде класса:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Example</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Пример универсальной реализации с дополнительной возможностью использования</span>
+<span class="sd"> * нескольких базовых директорий для одного префикса пространства имён.</span>
+<span class="sd"> * </span>
+<span class="sd"> * Допустим, у нас имеется пакет foo-bar с классами со следующей файловой структурой:</span>
+<span class="sd"> * </span>
+<span class="sd"> *     /path/to/packages/foo-bar/</span>
+<span class="sd"> *         src/</span>
+<span class="sd"> *             Baz.php             # Foo\Bar\Baz</span>
+<span class="sd"> *             Qux/</span>
+<span class="sd"> *                 Quux.php        # Foo\Bar\Qux\Quux</span>
+<span class="sd"> *         tests/</span>
+<span class="sd"> *             BazTest.php         # Foo\Bar\BazTest</span>
+<span class="sd"> *             Qux/</span>
+<span class="sd"> *                 QuuxTest.php    # Foo\Bar\Qux\QuuxTest</span>
+<span class="sd"> * </span>
+<span class="sd"> * Тогда добавить пути к файлам классов для префикса пространства имён \Foo\Bar\ можно так:</span>
+<span class="sd"> * </span>
+<span class="sd"> *      &lt;?php</span>
+<span class="sd"> *      // создаём загрузчик</span>
+<span class="sd"> *      $loader = new \Example\Psr4AutoloaderClass;</span>
+<span class="sd"> *      </span>
+<span class="sd"> *      // регистрируем загрузчик</span>
+<span class="sd"> *      $loader-&gt;register();</span>
+<span class="sd"> *      </span>
+<span class="sd"> *      // регистрируем базовые директории для префикса пространства имён</span>
+<span class="sd"> *      $loader-&gt;addNamespace(&#39;Foo\Bar&#39;, &#39;/path/to/packages/foo-bar/src&#39;);</span>
+<span class="sd"> *      $loader-&gt;addNamespace(&#39;Foo\Bar&#39;, &#39;/path/to/packages/foo-bar/tests&#39;);</span>
+<span class="sd"> * </span>
+<span class="sd"> * Следующая строчка заставит автозагрузчик попробовать загрузить класс</span>
+<span class="sd"> * \Foo\Bar\Qux\Quux из файла /path/to/packages/foo-bar/src/Qux/Quux.php:</span>
+<span class="sd"> * </span>
+<span class="sd"> *      &lt;?php</span>
+<span class="sd"> *      new \Foo\Bar\Qux\Quux;</span>
+<span class="sd"> * </span>
+<span class="sd"> * Следующая строчка заставит автозагрузчик попробовать загрузить класс</span>
+<span class="sd"> * \Foo\Bar\Qux\QuuxTest из файла /path/to/packages/foo-bar/tests/Qux/QuuxTest.php:</span>
+<span class="sd"> * </span>
+<span class="sd"> *      &lt;?php</span>
+<span class="sd"> *      new \Foo\Bar\Qux\QuuxTest;</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">Psr4AutoloaderClass</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Ассоциативный массив. Ключи содержат префикс пространства имён, значение — массив базовых директорий для классов</span>
+<span class="sd">     * в этом пространстве имён.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$prefixes</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Регистрирует загрузчик в стеке загрузчиков SPL.</span>
+<span class="sd">     * </span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nb">spl_autoload_register</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="nv">$this</span><span class="p">,</span> <span class="s1">&#39;loadClass&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Добавляет базовую директорию к префиксу пространства имён.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $prefix Префикс пространства имён.</span>
+<span class="sd">     * @param string $base_dir Базовая директория для файлов классов из пространства имён.</span>
+<span class="sd">     * @param bool $prepend Если true, добавить базовую директорию в начало стека. В этом случае она будет</span>
+<span class="sd">     * проверяться первой.</span>
+<span class="sd">     * @return void</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">addNamespace</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="nv">$base_dir</span><span class="p">,</span> <span class="nv">$prepend</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// нормализуем префикс пространства имён</span>
+        <span class="nv">$prefix</span> <span class="o">=</span> <span class="nb">trim</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;\\&#39;</span><span class="p">;</span>
+
+        <span class="c1">// нормализуем базовую директорию так, чтобы всегда присутствовал разделитель в конце</span>
+        <span class="nv">$base_dir</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$base_dir</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+
+        <span class="c1">// инициализируем массив префиксов пространства имён</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prefixes</span><span class="p">[</span><span class="nv">$prefix</span><span class="p">])</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prefixes</span><span class="p">[</span><span class="nv">$prefix</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="c1">// сохраняем базовую директорию для префикса пространства имён</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$prepend</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">array_unshift</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prefixes</span><span class="p">[</span><span class="nv">$prefix</span><span class="p">],</span> <span class="nv">$base_dir</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prefixes</span><span class="p">[</span><span class="nv">$prefix</span><span class="p">],</span> <span class="nv">$base_dir</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Загружает файл для заданного имени класса.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $class Абсолютное имя класса.</span>
+<span class="sd">     * @return mixed Если получилось, полное имя файла. Иначе false.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">loadClass</span><span class="p">(</span><span class="nv">$class</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// текущий префикс пространства имён</span>
+        <span class="nv">$prefix</span> <span class="o">=</span> <span class="nv">$class</span><span class="p">;</span>
+
+        <span class="c1">// для определения имени файла обходим пространства имён из абсолютного</span>
+        <span class="c1">// имени класса в обратном порядке</span>
+        <span class="k">while</span> <span class="p">(</span><span class="k">false</span> <span class="o">!==</span> <span class="nv">$pos</span> <span class="o">=</span> <span class="nb">strrpos</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="c1">// сохраняем завершающий разделитель пространства имён в префиксе</span>
+            <span class="nv">$prefix</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="c1">// всё оставшееся — относительное имя класса</span>
+            <span class="nv">$relative_class</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="nv">$pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="c1">// пробуем загрузить соответсвующий префиксу и относительному имени класса файл</span>
+            <span class="nv">$mapped_file</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadMappedFile</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="nv">$relative_class</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$mapped_file</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nv">$mapped_file</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// убираем завершающий разделитель пространства имён для следующей итерации strrpos()</span>
+            <span class="nv">$prefix</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">);</span>   
+        <span class="p">}</span>
+
+        <span class="c1">// файл так и не был найден</span>
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Загружает соответствующий префиксу пространства имён и относительному имени класса файл.</span>
+<span class="sd">     * </span>
+<span class="sd">     * @param string $prefix Префикс пространства имён.</span>
+<span class="sd">     * @param string $relative_class Относительное имя класса.</span>
+<span class="sd">     * @return mixed false если файл не был загружен. Иначе имя загруженного файла.</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">loadMappedFile</span><span class="p">(</span><span class="nv">$prefix</span><span class="p">,</span> <span class="nv">$relative_class</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// есть ли у этого префикса пространства имён какие либо базовые директории?</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prefixes</span><span class="p">[</span><span class="nv">$prefix</span><span class="p">])</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// ищем префикс в базовых директориях</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">prefixes</span><span class="p">[</span><span class="nv">$prefix</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$base_dir</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="c1">// заменяем префикс базовой директорией,</span>
+            <span class="c1">// заменяем разделители пространства имён на разделители директорий</span>
+            <span class="c1">// к относительному имени класса добавляем .php</span>
+            <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$base_dir</span>
+                  <span class="o">.</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nv">$relative_class</span><span class="p">)</span>
+                  <span class="o">.</span> <span class="s1">&#39;.php&#39;</span><span class="p">;</span>
+
+            <span class="c1">// если файл существует, загружаем его</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">requireFile</span><span class="p">(</span><span class="nv">$file</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// ура, получилось</span>
+                <span class="k">return</span> <span class="nv">$file</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// файл так и не был найден</span>
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Если файл существует, загружеаем его.</span>
+<span class="sd">     * </span>
+<span class="sd">     * @param string $file файл для загрузки.</span>
+<span class="sd">     * @return bool true если файл существует, false если нет.</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">requireFile</span><span class="p">(</span><span class="nv">$file</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$file</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">require</span> <span class="nv">$file</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="unit-тесты">Unit-тесты</h3>
+
+<p>Следующий пример показывает способ тестирования приведённого выше загрузчика:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Example\Tests</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">MockPsr4AutoloaderClass</span> <span class="k">extends</span> <span class="nx">Psr4AutoloaderClass</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$files</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setFiles</span><span class="p">(</span><span class="k">array</span> <span class="nv">$files</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span> <span class="o">=</span> <span class="nv">$files</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">requireFile</span><span class="p">(</span><span class="nv">$file</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">in_array</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Psr4AutoloaderClassTest</span> <span class="k">extends</span> <span class="nx">\PHPUnit_Framework_TestCase</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$loader</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">setUp</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MockPsr4AutoloaderClass</span><span class="p">;</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">setFiles</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s1">&#39;/vendor/foo.bar/src/ClassName.php&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar/src/DoomClassName.php&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar/tests/ClassNameTest.php&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bardoom/src/ClassName.php&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar.baz.dib/src/ClassName.php&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar.baz.dib.zim.gir/src/ClassName.php&#39;</span><span class="p">,</span>
+        <span class="p">));</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span>
+            <span class="s1">&#39;Foo\Bar&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar/src&#39;</span>
+        <span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span>
+            <span class="s1">&#39;Foo\Bar&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar/tests&#39;</span>
+        <span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span>
+            <span class="s1">&#39;Foo\BarDoom&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bardoom/src&#39;</span>
+        <span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span>
+            <span class="s1">&#39;Foo\Bar\Baz\Dib&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar.baz.dib/src&#39;</span>
+        <span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">addNamespace</span><span class="p">(</span>
+            <span class="s1">&#39;Foo\Bar\Baz\Dib\Zim\Gir&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/vendor/foo.bar.baz.dib.zim.gir/src&#39;</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testExistingFile</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$actual</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">loadClass</span><span class="p">(</span><span class="s1">&#39;Foo\Bar\ClassName&#39;</span><span class="p">);</span>
+        <span class="nv">$expect</span> <span class="o">=</span> <span class="s1">&#39;/vendor/foo.bar/src/ClassName.php&#39;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertSame</span><span class="p">(</span><span class="nv">$expect</span><span class="p">,</span> <span class="nv">$actual</span><span class="p">);</span>
+
+        <span class="nv">$actual</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">loadClass</span><span class="p">(</span><span class="s1">&#39;Foo\Bar\ClassNameTest&#39;</span><span class="p">);</span>
+        <span class="nv">$expect</span> <span class="o">=</span> <span class="s1">&#39;/vendor/foo.bar/tests/ClassNameTest.php&#39;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertSame</span><span class="p">(</span><span class="nv">$expect</span><span class="p">,</span> <span class="nv">$actual</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testMissingFile</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$actual</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">loadClass</span><span class="p">(</span><span class="s1">&#39;No_Vendor\No_Package\NoClass&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertFalse</span><span class="p">(</span><span class="nv">$actual</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testDeepFile</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$actual</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">loadClass</span><span class="p">(</span><span class="s1">&#39;Foo\Bar\Baz\Dib\Zim\Gir\ClassName&#39;</span><span class="p">);</span>
+        <span class="nv">$expect</span> <span class="o">=</span> <span class="s1">&#39;/vendor/foo.bar.baz.dib.zim.gir/src/ClassName.php&#39;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertSame</span><span class="p">(</span><span class="nv">$expect</span><span class="p">,</span> <span class="nv">$actual</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testConfusion</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$actual</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">loadClass</span><span class="p">(</span><span class="s1">&#39;Foo\Bar\DoomClassName&#39;</span><span class="p">);</span>
+        <span class="nv">$expect</span> <span class="o">=</span> <span class="s1">&#39;/vendor/foo.bar/src/DoomClassName.php&#39;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertSame</span><span class="p">(</span><span class="nv">$expect</span><span class="p">,</span> <span class="nv">$actual</span><span class="p">);</span>
+
+        <span class="nv">$actual</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loader</span><span class="o">-&gt;</span><span class="na">loadClass</span><span class="p">(</span><span class="s1">&#39;Foo\BarDoom\ClassName&#39;</span><span class="p">);</span>
+        <span class="nv">$expect</span> <span class="o">=</span> <span class="s1">&#39;/vendor/foo.bardoom/src/ClassName.php&#39;</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertSame</span><span class="p">(</span><span class="nv">$expect</span><span class="p">,</span> <span class="nv">$actual</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><a href="http://www.php-fig.org/psr/psr-4/ru">PSR-4 — Автозагрузчик</a></li>
+    
+    
+    
+    <li><a href="http://www.php-fig.org/psr/psr-4/ru/meta">PSR-4 метадокумент</a></li>
+    
+    
+    
+    <li><b>Примеры реализации PSR-4</b></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-0" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-1" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-2" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-3" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="http://www.php-fig.org/psr/psr-4" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="http://www.php-fig.org/psr/psr-7" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-4/ru/examples/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+</html>

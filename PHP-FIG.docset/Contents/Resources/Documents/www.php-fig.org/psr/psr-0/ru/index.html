@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-0/ru/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-0 — Стандарт Автозагрузки</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><a href="../pt-br/index.html">Brazilian Portuguese</a></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="../it/index.html">Italian</a></li>
+      
+    
+      
+        <li><b>Russian</b></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><a href="../es/index.html">Spanish</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="Стандарт-Автозагрузки">Стандарт Автозагрузки</h1>
+
+<blockquote>
+<p><strong>Deprecated</strong> - По состоянию на 21 октября 2014 года PSR-0 был помечен как устаревший.
+В настоящее время рекомендуется использовать <a href="../../psr-4/index.html">PSR-4</a> в качестве замены.</p>
+</blockquote>
+
+<p>Ниже описаны обязательные требования, которые должны быть выполнены для совместимости с автозагрузчиком классов.</p>
+
+<h2 id="Обязательно">Обязательно</h2>
+
+<ul>
+<li>Полное пространство имён вместе с классом должны иметь следующую структуру <code>\&lt;Имя производителя&gt;\(&lt;Пространство имён&gt;\)*&lt;Имя класса&gt;</code></li>
+<li>У каждого пространства имён должен быть корневой уровень (&quot;Имя Производителя&quot;).</li>
+<li>У каждого пространства имён может быть не ограниченное количество подуровней, по мере необходимости.</li>
+<li>Все разделители пространства имён преобразуются в <code>DIRECTORY_SEPARATOR</code> при загрузке из файловой системы.</li>
+<li>Каждый символ <code>_</code> в ИМЕНИ КЛАССА преобразуется в <code>DIRECTORY_SEPARATOR</code>. Символ <code>_</code> не имеет специального значения в пространстве имён.</li>
+<li>Полное пространство имён вместе с классом дополняются суффиксом <code>.php</code> при загрузке из файловой системы.</li>
+<li>Названия производителей, пространства имен и имена классов могут содержать любую комбинацию строчных и заглавных букв.</li>
+</ul>
+
+<h2 id="Примеры">Примеры</h2>
+
+<ul>
+<li><code>\Doctrine\Common\IsolatedClassLoader</code> =&gt; <code>/path/to/project/lib/vendor/Doctrine/Common/IsolatedClassLoader.php</code></li>
+<li><code>\Symfony\Core\Request</code> =&gt; <code>/path/to/project/lib/vendor/Symfony/Core/Request.php</code></li>
+<li><code>\Zend\Acl</code> =&gt; <code>/path/to/project/lib/vendor/Zend/Acl.php</code></li>
+<li><code>\Zend\Mail\Message</code> =&gt; <code>/path/to/project/lib/vendor/Zend/Mail/Message.php</code></li>
+</ul>
+
+<h2 id="Подчеркивания-в-пространстве-имён-и-именах-классов">Подчеркивания в пространстве имён и именах классов</h2>
+
+<ul>
+<li><code>\namespace\package\Class_Name</code> =&gt; <code>/path/to/project/lib/vendor/namespace/package/Class/Name.php</code></li>
+<li><code>\namespace\package_name\Class_Name</code> =&gt; <code>/path/to/project/lib/vendor/namespace/package_name/Class/Name.php</code></li>
+</ul>
+
+<p>Указанные выше стандарты являются минимальным требованием для совместимости с автозагрузчиками. Вы можете убедиться, что следуете стандартам используя пример реализации SplClassLoader, который способен загружать классы PHP 5.3.</p>
+
+<h2 id="Пример-реализации">Пример реализации</h2>
+
+<p>Ниже приведен пример функции, показывающей как стандарты, предлагаемые выше, могут использоваться автозагрузчиком.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">function</span> <span class="nf">autoload</span><span class="p">(</span><span class="nv">$className</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$className</span> <span class="o">=</span> <span class="nb">ltrim</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">);</span>
+    <span class="nv">$fileName</span>  <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="nv">$namespace</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$lastNsPos</span> <span class="o">=</span> <span class="nb">strrpos</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="s1">&#39;\\&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$namespace</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$lastNsPos</span><span class="p">);</span>
+        <span class="nv">$className</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$className</span><span class="p">,</span> <span class="nv">$lastNsPos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="nv">$fileName</span>  <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span> <span class="nv">$namespace</span><span class="p">)</span> <span class="o">.</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$fileName</span> <span class="o">.=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span> <span class="nv">$className</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;.php&#39;</span><span class="p">;</span>
+
+    <span class="k">require</span> <span class="nv">$fileName</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nb">spl_autoload_register</span><span class="p">(</span><span class="s1">&#39;autoload&#39;</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="Реализация-splclassloader">Реализация SplClassLoader</h2>
+
+<p>В gist по ссылке ниже приводится пример реализации SplClassLoader, который может загружать ваши классы, если они соответствуют стандарту, описанному выше и является рекомендуемым способом загрузки классов в PHP 5.3.</p>
+
+<ul>
+<li><a href="http://gist.github.com/221634">http://gist.github.com/221634</a></li>
+</ul>
+
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../../psr-4/index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-0/ru/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+</html>

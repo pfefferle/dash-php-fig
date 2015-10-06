@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-2/pt-br/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:34 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-2 — Guia de Estilo de Codificação</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><b>Brazilian Portuguese</b></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="../it/index.html">Italian</a></li>
+      
+    
+      
+        <li><a href="../ru/index.html">Russian</a></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><a href="../es/index.html">Spanish</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="guia-de-estilo-de-codificação">Guia de Estilo de Codificação</h1>
+
+<p>Este guia estende e expande o <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>, o padrão básico de codificação.</p>
+
+<p>A intenção deste guia é reduzir a fricção cognitiva quando lendo códigos de diferentes autores. Isto é feito enumerando um conjunto de regras compartilhadas e expectativas de como formatar códigos em PHP.</p>
+
+<p>As regras de estilo incluídas aqui são derivadas de semelhanças entre vários projetos membros. Quando vários autores colaboram entre múltiplos projetos, ajuda ter um conjunto de princípios básicos à ser utilizado em todos os projetos. Assim, o benefício deste guia não está nas regras em sí, mas no compartilhamento destas regras.</p>
+
+<p>As palavras chave &quot;DEVE&quot;, &quot;NÃO DEVE&quot;, &quot;OBRIGATÓRIO&quot;, &quot;TEM QUE&quot;, &quot;NÃO TEM QUE&quot;, &quot;DEVERIA&quot;, &quot;NÃO DEVERIA&quot;, &quot;RECOMENDADO&quot;, &quot;PODE&quot; e &quot;OPCIONAL&quot; existentes neste documento devem ser interpretadas como são descritas no <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+
+<h2 id="1-visão-geral">1. Visão Geral</h2>
+
+<ul>
+<li><p>Códigos DEVEM seguir <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>.</p></li>
+<li><p>Códigos DEVEM utilizar 4 espaços para indentação, não tabs.</p></li>
+<li><p>NÃO DEVE existir um limite absoluto no comprimento da linha; O limite relativo DEVE ser de 120 caracteres; As linhas DEVERIAM ter 80 caracteres ou menos.</p></li>
+<li><p>DEVE existir uma linha em branco após da declaração do <code>namespace</code> e DEVE existir uma linha em branco após o bloco de declarações de <code>use</code>.</p></li>
+<li><p>Chaves de abertura para classes DEVEM ser colocadas na linha seguinte e chaves de fechamento DEVEM ser colocadas na linha após o corpo da classe.</p></li>
+<li><p>Chaves de abertura para métodos DEVEM ser colocadas na linha seguinte e chaves de fechamento DEVEM ser colocadas na linha após o corpo do método.</p></li>
+<li><p>Visibilidade DEVE ser declarada em todas as propriedades e métodos; <code>abstract</code> e <code>final</code> DEVEM ser declarados antes da visibilidade; <code>static</code> DEVE ser declarado depois da visibilidade.</p></li>
+<li><p>Palavras-chave de estruturas de controle DEVEM ter um espaço depois delas; chamadas de métodos e funções NÃO DEVEM.</p></li>
+<li><p>Chaves de abertura para estruturas de controle DEVEM ser colocadas na mesma linha e chaves de fechamento DEVEM ser colocadas na linha após o corpo da estrutura de controle.</p></li>
+<li><p>Parenteses de abertura para estruturas de controle NÃO DEVEM ter um espaço depois delas e parenteses de fechamento para estruturas de controle NÃO DEVEM ter um espaço antes.</p></li>
+</ul>
+
+<h3 id="1-1-exemplo">1.1. Exemplo</h3>
+
+<p>Este exemplo engloba algumas das regras abaixo como uma rápida visão geral:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooInterface</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Foo</span> <span class="k">extends</span> <span class="nx">Bar</span> <span class="k">implements</span> <span class="nx">FooInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">sampleFunction</span><span class="p">(</span><span class="nv">$a</span><span class="p">,</span> <span class="nv">$b</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$a</span> <span class="o">===</span> <span class="nv">$b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">bar</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$a</span> <span class="o">&gt;</span> <span class="nv">$b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">BazClass</span><span class="o">::</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">final</span> <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">bar</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// corpo do método</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="2-geral">2. Geral</h2>
+
+<h3 id="2-1-padrão-básico-de-codificação">2.1 Padrão Básico de Codificação</h3>
+
+<p>Códigos DEVEM seguir todas as regras traçadas na <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>.</p>
+
+<h3 id="2-2-arquivos">2.2 Arquivos</h3>
+
+<p>Todos os arquivos PHP DEVEM utilizar o padrão Unix LF (linefeed) de terminação de linhas.</p>
+
+<p>Todos os arquivos PHP DEVEM terminar com uma única linha em branco.</p>
+
+<p>A tag de fechamento <code>?&gt;</code> DEVE ser omitida em arquivos contendo somente PHP.</p>
+
+<h3 id="2-3-linhas">2.3. Linhas</h3>
+
+<p>NÃO DEVE haver um limite absoluto no comprimento da linha.</p>
+
+<p>O limite relativo no comprimento das linhas DEVE ser de 120 caracteres; Analizadores automáticos de estilo DEVEM advertir, mas NÃO DEVEM exibir um erro ao ultrapassar o limite relativo.</p>
+
+<p>Linhas NÃO DEVERIAM ser mais longas que 80 caracteres; Linhas mais longas que isso DEVERIAM ser divididas em múltiplas linhas subsequentes de não mais que 80 caracteres cada.</p>
+
+<p>NÃO DEVE haver espaços em branco ao final de linhas que não estão em branco.</p>
+
+<p>Linhas em branco PODEM ser adicionadas para melhorar a legibilidade e para indicar blocos relacionados de código.</p>
+
+<p>NÃO DEVE haver mais do que uma declaração por linha.</p>
+
+<h3 id="2-4-indentação">2.4. Indentação</h3>
+
+<p>Códigos DEVEM utilizar uma indentação de 4 espaços e NÃO DEVEM utilizar tabs para indentação.</p>
+
+<blockquote>
+<p>Utilizando somente espaços e não misturando com tabs, ajuda a evitar
+problemas com diffs, patches, history e annotations em sistemas de 
+versionamento. A utilização de espaços também torna fácil incluir 
+sub-indentações granuladas para alinhamento inter-linhas.</p>
+</blockquote>
+
+<h3 id="2-5-palavras-chave-e-true-false-null">2.5. Palavras-chave e True/False/Null</h3>
+
+<p><a href="http://php.net/manual/en/reserved.keywords.php">Palavras-chave</a> PHP DEVEM ser em letras minúsculas.</p>
+
+<p>As constantes PHP <code>true</code>, <code>false</code> e <code>null</code> DEVEM ser em letras minúsculas.</p>
+
+<h2 id="3-declarações-namespace-e-use">3. Declarações Namespace e Use</h2>
+
+<p>Quando presente, DEVE haver uma linha em branco após a declaração do <code>namespace</code>.</p>
+
+<p>Quando presente, todas as declarações <code>use</code> DEVEM ser colocadas após a declaração do <code>namespace</code>.</p>
+
+<p>DEVE haver somente uma palavra-chave <code>use</code> por declaração.</p>
+
+<p>DEVE haver uma linha em branco depois do bloco de <code>use</code>.</p>
+
+<p>Por exemplo:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooClass</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="c1">// ... mais código PHP ...</span>
+</code></pre></div>
+<h2 id="4-classes-propriedades-e-métodos">4. Classes, Propriedades e Métodos</h2>
+
+<p>O termo classe se refere a todas as classes, interfaces e traits.</p>
+
+<h3 id="4-1-extends-e-implements">4.1. Extends e Implements</h3>
+
+<p>As palavras-chave <code>extends</code> e <code>implements</code> DEVEM ser declaradas na mesma linha que o nome da classe.</p>
+
+<p>A chave de abertura para a classe DEVE ser colocada em sua própria linha; a chave de fechamento DEVE ser coloca na linha após o corpo da classe.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooClass</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span> <span class="k">extends</span> <span class="nx">ParentClass</span> <span class="k">implements</span> <span class="nx">\ArrayAccess</span><span class="p">,</span> <span class="nx">\Countable</span>
+<span class="p">{</span>
+    <span class="c1">// constantes, propriedades, métodos</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Listas de <code>implements</code> PODEM ser divididas em múltiplas linhas, onde cada linha subsequente é indentada uma vez. Quando fazendo isto, o primeiro item da lista DEVE ser colocado na linha seguinte e DEVE haver somente uma interface por linha.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">FooClass</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">BarClass</span> <span class="k">as</span> <span class="nx">Bar</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">OtherVendor\OtherPackage\BazClass</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span> <span class="k">extends</span> <span class="nx">ParentClass</span> <span class="k">implements</span>
+    <span class="nx">\ArrayAccess</span><span class="p">,</span>
+    <span class="nx">\Countable</span><span class="p">,</span>
+    <span class="nx">\Serializable</span>
+<span class="p">{</span>
+    <span class="c1">// constantes, propriedades, métodos</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-2-propriedades">4.2. Propriedades</h3>
+
+<p>Visibilidades DEVEM ser declaradas para todas as propriedades.</p>
+
+<p>A palavra-chave <code>var</code> NÃO DEVE ser utilizada pra declarar uma propriedade.</p>
+
+<p>NÃO DEVE haver mais de uma propriedade declarada por linha.</p>
+
+<p>Nomes de propriedades NÃO DEVERIAM ser prefixadas com <code>_</code> para indicar visibilidades <code>protected</code> ou <code>private</code>.</p>
+
+<p>Uma declaração de propriedade se parece com o seguinte:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$foo</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-3-métodos">4.3. Métodos</h3>
+
+<p>Visibilidades DEVEM ser declaradas em todos os métodos.</p>
+
+<p>Nomes de métodos NÃO DEVERIAM ser prefixadas com <code>_</code> para indicar visibilidades <code>protected</code> ou <code>private</code>.</p>
+
+<p>Assinaturas de métodos NÃO DEVEM ser declaradas com um espaço após o nome do método. A chave de abertura DEVE ser colocada em sua própria linha e a chave de fechamento DEVE ser colocada na linha após o corpo do método. NÃO DEVE haver um espaço depois do parenteses de abertura e NÃO DEVE haver um espaço antes do parenteses de fechamento.</p>
+
+<p>Uma declaração de método se parece com o seguinte. Note o posicionamento dos parenteses, virgulas, espaços e chaves:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">fooBarBaz</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span> <span class="o">=</span> <span class="p">[])</span>
+    <span class="p">{</span>
+        <span class="c1">// corpo do método</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-4-argumentos-de-métodos">4.4. Argumentos de Métodos</h3>
+
+<p>Na lista de argumentos, NÃO DEVE haver um espaço antes de cada vírgula e DEVE haver um espaço após cada vírgula.</p>
+
+<p>Argumentos de métodos com valores default DEVEM ser colocados ao fim da lista de argumentos.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span> <span class="o">=</span> <span class="p">[])</span>
+    <span class="p">{</span>
+        <span class="c1">// corpo do método</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Lista de argumentos PODEM ser divididas entre múltiplas linhas, onde cada linha subsequente é indentada uma vez. Quando fazendo isto, o primeiro item da lista DEVE estar na linha seguinte e DEVE haver somente um argumento por linha.</p>
+
+<p>Quando a lista de argumento é dividida em multiplas linhas, o parenteses de fechamento e a chave abertura DEVEM ser colocadas juntas em sua própria linha com um espaço entre elas.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">aVeryLongMethodName</span><span class="p">(</span>
+        <span class="nx">ClassTypeHint</span> <span class="nv">$arg1</span><span class="p">,</span>
+        <span class="o">&amp;</span><span class="nv">$arg2</span><span class="p">,</span>
+        <span class="k">array</span> <span class="nv">$arg3</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// corpo do método</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-5-abstract-final-e-static">4.5. <code>abstract</code>, <code>final</code> e <code>static</code></h3>
+
+<p>Quando presente, as declarações <code>abstract</code> e <code>final</code> DEVEM preceder as declarações de visibilidade.</p>
+
+<p>Quando presente, a declaração <code>static</code> DEVEM vir depois da declaração de visibilidade.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Vendor\Package</span><span class="p">;</span>
+
+<span class="k">abstract</span> <span class="k">class</span> <span class="nc">ClassName</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="nv">$foo</span><span class="p">;</span>
+
+    <span class="k">abstract</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">zim</span><span class="p">();</span>
+
+    <span class="k">final</span> <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">bar</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// corpo do método</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="4-6-method-and-function-calls">4.6. Method and Function Calls</h3>
+
+<p>Quando fazendo uma chamada de métodos ou funções, NÃO DEVE haver um espaço entre o nome do método e o parenteses de abertura, NÃO DEVE haver um espaço após o parenteses de abertura e NÃO DEVE haver um espaço antes do parenteses de fechamento. Na lista de argumentos, NÃO DEVE haver um espaço antes de cada vírgula e DEVE haver um espaço após cada vírgula.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nx">bar</span><span class="p">();</span>
+<span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg1</span><span class="p">);</span>
+<span class="nx">Foo</span><span class="o">::</span><span class="na">bar</span><span class="p">(</span><span class="nv">$arg2</span><span class="p">,</span> <span class="nv">$arg3</span><span class="p">);</span>
+</code></pre></div>
+<p>Listas de argumentos PODEM ser divididas em múltiplas linhas, onde cada linha subsequente é indentada uma vez. Quando fazendo isto, o primeiro item da lista DEVE estar na linha seguinte e DEVE haver somente um argumento por linha.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">);</span>
+</code></pre></div>
+<h2 id="5-estruturas-de-controle">5. Estruturas de Controle</h2>
+
+<p>As regras gerais de estilo para estruturas de controle são as seguintes:</p>
+
+<ul>
+<li>DEVE haver um espaço após a palavra-chave da estrutura de controle</li>
+<li>NÃO DEVE haver um espaço depois do parenteses de abertura</li>
+<li>NÃO DEVE haver um espaço antes do parenteses de fechamento</li>
+<li>DEVE haver um espaço entre o parenteses de fechamento e a chave de abertura.</li>
+<li>O corpo da estrutura DEVE ser indentada uma vez</li>
+<li>A chave de fechamento DEVE ser colocada na linha após o corpo da estrutura</li>
+</ul>
+
+<p>O corpo de cada estrutura DEVE ser envolta por chaves. Isso padroniza como as estruturas se parecem e reduz a possibilidade de introduzir erros à medida que novas linhas são adicionadas ao corpo da estrutura.</p>
+
+<h3 id="5-1-if-elseif-else">5.1. <code>if</code>, <code>elseif</code>, <code>else</code></h3>
+
+<p>Uma estrutura <code>if</code> se parece com o seguinte. Note o posicionamento dos parenteses, espaços e chaves; e que <code>else</code> e <code>elseif</code> estão na mesma linha que a chave de fechamento do corpo da estrutura anterior.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$expr1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo do if</span>
+<span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$expr2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo do elseif</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// corpo do else</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>A palavra-chave <code>elseif</code> DEVERIA ser utilizada ao invés de <code>else if</code> para que todas as palavras-chave de controle se pareçam com uma só palavra.</p>
+
+<h3 id="5-2-switch-case">5.2. <code>switch</code>, <code>case</code></h3>
+
+<p>Uma estrutura <code>switch</code> se parece com o seguinte. Note o posicionamento dos parenteses, espaços e chaves. A declaração <code>case</code> DEVE ser identada uma vez do <code>switch</code> e a palavra-chave <code>case</code> (ou qualquer outra palavra-chave de terminação) DEVE ser indentada no mesmo nível que o corpo do <code>case</code>. DEVE haver um comentário como <code>//sem break</code> quando a passagem próximo case é intencional em um corpo de <code>case</code> que não está vazio.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">switch</span> <span class="p">(</span><span class="nv">$expr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Primeiro case, com um break&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Segundo case, passando para o próximo case&#39;</span><span class="p">;</span>
+        <span class="c1">// sem break</span>
+    <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+    <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+    <span class="k">case</span> <span class="mi">4</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Terceiro case, return ao invés de break&#39;</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="k">echo</span> <span class="s1">&#39;Default case&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="5-3-while-do-while">5.3. <code>while</code>, <code>do while</code></h3>
+
+<p>Uma estrutura <code>while</code> se parece com o seguinte. Note o posicionamento dos  parenteses, espaços e chaves.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">while</span> <span class="p">(</span><span class="nv">$expr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo da estrutura</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Similarmente, uma estrutura <code>do while</code> se parece com o seguinte. Note o posicionamento dos  parenteses, espaços e chaves.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">do</span> <span class="p">{</span>
+    <span class="c1">// corpo da estrutura</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nv">$expr</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="5-4-for">5.4. <code>for</code></h3>
+
+<p>Uma estrutura <code>for</code> se parece com o seguinte. Note o posicionamento dos  parenteses, espaços e chaves.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo do for</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="5-5-foreach">5.5. <code>foreach</code></h3>
+
+<p>Uma estrutura <code>foreach</code> se parece com o seguinte. Note o posicionamento dos  parenteses, espaços e chaves.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$iterable</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo do foreach</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="5-6-try-catch">5.6. <code>try</code>, <code>catch</code></h3>
+
+<p>Uma estrutura <code>try catch</code> se parece com o seguinte. Note o posicionamento dos  parenteses, espaços e chaves.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">try</span> <span class="p">{</span>
+    <span class="c1">// corpo do try</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">FirstExceptionType</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo do catch</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">OtherExceptionType</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo do catch</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="6-closures">6. Closures</h2>
+
+<p>Closures DEVEM ser declaradas com um espaço após a palavra-chave <code>function</code>, e um espaço antes e depois da palavra-chave <code>use</code>.</p>
+
+<p>A chave de abertura DEVE ser colocada na mesma linha e a chave de fechamento DEVE ser colocada na linha seguinte ao fim do corpo da closure.</p>
+
+<p>NÃO DEVE haver um espaço após o parentese de abertura da lista de argumentos ou variáveis e NÃO DEVE haver um espaço antes do parentese de fechamento da lista de argumentos ou variáveis.</p>
+
+<p>Na lista de argumentos e lista de variáveis, NÃO DEVE haver um espaço antes de cada vírgula e DEVE haver um espaço após cada vírgula.</p>
+
+<p>Argumentos de closures com valores default DEVEM ser colocados ao fim da lista de argumentos.</p>
+
+<p>Uma declaração de closure se parece com o seguinte. Note o posicionamento dos parenteses, vírgulas, espaços e chaves:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$closureWithArgs</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="nv">$arg2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo</span>
+<span class="p">};</span>
+
+<span class="nv">$closureWithArgsAndVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg1</span><span class="p">,</span> <span class="nv">$arg2</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$var1</span><span class="p">,</span> <span class="nv">$var2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// corpo</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Listas de argumentos e variáveis PODEM ser dividas em múltiplas linhas, onde cada linha subsequente  é indentada uma vez. Quando fazendo isto, o primeiro item da lista DEVE estar na próxima linha e DEVE haver somente um argumento ou variável por linha.</p>
+
+<p>Quando uma lista finalizando (sendo argumentos ou variáveis) é divida em múltiplas linhas, o parentese de fechamento e a chave abertura  DEVEM ser colocados em sua própria linha com um espaço entre eles.</p>
+
+<p>A seguir estão exemplos de closures com e sem listas de argumentos e variáveis que se dividem por múltiplas linhas.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$longArgs_noVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// corpo</span>
+<span class="p">};</span>
+
+<span class="nv">$noArgs_longVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span> <span class="k">use</span> <span class="p">(</span>
+    <span class="nv">$longVar1</span><span class="p">,</span>
+    <span class="nv">$longerVar2</span><span class="p">,</span>
+    <span class="nv">$muchLongerVar3</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// corpo</span>
+<span class="p">};</span>
+
+<span class="nv">$longArgs_longVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">)</span> <span class="k">use</span> <span class="p">(</span>
+    <span class="nv">$longVar1</span><span class="p">,</span>
+    <span class="nv">$longerVar2</span><span class="p">,</span>
+    <span class="nv">$muchLongerVar3</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// corpo</span>
+<span class="p">};</span>
+
+<span class="nv">$longArgs_shortVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span>
+    <span class="nv">$longArgument</span><span class="p">,</span>
+    <span class="nv">$longerArgument</span><span class="p">,</span>
+    <span class="nv">$muchLongerArgument</span>
+<span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$var1</span><span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// corpo</span>
+<span class="p">};</span>
+
+<span class="nv">$shortArgs_longVars</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span>
+    <span class="nv">$longVar1</span><span class="p">,</span>
+    <span class="nv">$longerVar2</span><span class="p">,</span>
+    <span class="nv">$muchLongerVar3</span>
+<span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// corpo</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Note que as regras de formatação também se aplicam em closures que são utilizadas diretamente numa chamada de função ou método como um argumento.</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$foo</span><span class="o">-&gt;</span><span class="na">bar</span><span class="p">(</span>
+    <span class="nv">$arg1</span><span class="p">,</span>
+    <span class="k">function</span> <span class="p">(</span><span class="nv">$arg2</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$var1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// corpo</span>
+    <span class="p">},</span>
+    <span class="nv">$arg3</span>
+<span class="p">);</span>
+</code></pre></div>
+<h2 id="7-conclusão">7. Conclusão</h2>
+
+<p>Há vários elementos de estilos e práticas que foram intencionalmente omitidos neste guia. Incluindo, mas não limitado à:</p>
+
+<ul>
+<li><p>Declaração de variáveis globais e constantes globais</p></li>
+<li><p>Declaração de funções</p></li>
+<li><p>Operadores e atribuição</p></li>
+<li><p>Alinhamento inter-linhas</p></li>
+<li><p>Comentários e blocos de documentação</p></li>
+<li><p>Prefixos e sufixos de nomes de classes</p></li>
+<li><p>Melhores práticas</p></li>
+</ul>
+
+<p>Recomendações futuras PODEM revisar e extender este guia para cobrir esses ou outros elementos de estilo e prática.</p>
+
+<h2 id="apêndice-a-votação">Apêndice A. Votação</h2>
+
+<p>Ao escrever este guia de estilo, o grupo fez uma votação entre os projetos membros para determinar práticas comuns. Esta votação esta incluida aqui para posteridade.</p>
+
+<h3 id="a-1-dados-da-votação-mantido-como-o-original">A.1. Dados da votação (Mantido como o original)</h3>
+<div class="highlight"><pre><code class="language-text" data-lang="text">url,http://www.horde.org/apps/horde/docs/CODING_STANDARDS,http://pear.php.net/manual/en/standards.php,http://solarphp.com/manual/appendix-standards.style,http://framework.zend.com/manual/en/coding-standard.html,http://symfony.com/doc/2.0/contributing/code/standards.html,http://www.ppi.io/docs/coding-standards.html,https://github.com/ezsystems/ezp-next/wiki/codingstandards,http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html,https://github.com/UnionOfRAD/lithium/wiki/Spec%3A-Coding,http://drupal.org/coding-standards,http://code.google.com/p/sabredav/,http://area51.phpbb.com/docs/31x/coding-guidelines.html,https://docs.google.com/a/zikula.org/document/edit?authkey=CPCU0Us&amp;hgd=1&amp;id=1fcqb93Sn-hR9c0mkN6m_tyWnmEvoswKBtSc0tKkZmJA,http://www.chisimba.com,n/a,https://github.com/Respect/project-info/blob/master/coding-standards-sample.php,n/a,Object Calisthenics for PHP,http://doc.nette.org/en/coding-standard,http://flow3.typo3.org,https://github.com/propelorm/Propel2/wiki/Coding-Standards,http://developer.joomla.org/coding-standards.html
+voting,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,no,no,no,?,yes,no,yes
+indent_type,4,4,4,4,4,tab,4,tab,tab,2,4,tab,4,4,4,4,4,4,tab,tab,4,tab
+line_length_limit_soft,75,75,75,75,no,85,120,120,80,80,80,no,100,80,80,?,?,120,80,120,no,150
+line_length_limit_hard,85,85,85,85,no,no,no,no,100,?,no,no,no,100,100,?,120,120,no,no,no,no
+class_names,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,lower_under,studly,lower,studly,studly,studly,studly,?,studly,studly,studly
+class_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,next,next,next,next,next,next,same,next,next
+constant_names,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper
+true_false_null,lower,lower,lower,lower,lower,lower,lower,lower,lower,upper,lower,lower,lower,upper,lower,lower,lower,lower,lower,upper,lower,lower
+method_names,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,lower_under,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel
+method_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,same,next,next,next,next,next,same,next,next
+control_brace_line,same,same,same,same,same,same,next,same,same,same,same,next,same,same,next,same,same,same,same,same,same,next
+control_space_after,yes,yes,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
+always_use_control_braces,yes,yes,yes,yes,yes,yes,no,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes
+else_elseif_line,same,same,same,same,same,same,next,same,same,next,same,next,same,next,next,same,same,same,same,same,same,next
+case_break_indent_from_switch,0/1,0/1,0/1,1/2,1/2,1/2,1/2,1/1,1/1,1/2,1/2,1/1,1/2,1/2,1/2,1/2,1/2,1/2,0/1,1/1,1/2,1/2
+function_space_after,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no
+closing_php_tag_required,no,no,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,no,no,yes,no,no
+line_endings,LF,LF,LF,LF,LF,LF,LF,LF,?,LF,?,LF,LF,LF,LF,?,,LF,?,LF,LF,LF
+static_or_visibility_first,static,?,static,either,either,either,visibility,visibility,visibility,either,static,either,?,visibility,?,?,either,either,visibility,visibility,static,?
+control_space_parens,no,no,no,no,no,no,yes,no,no,no,no,no,no,yes,?,no,no,no,no,no,no,no
+blank_line_after_php,no,no,no,no,yes,no,no,no,no,yes,yes,no,no,yes,?,yes,yes,no,yes,no,yes,no
+class_method_control_brace,next/next/same,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/next,same/same/same,same/same/same,same/same/same,same/same/same,next/next/next,next/next/same,next/same/same,next/next/next,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/same,next/next/next
+</code></pre></div>
+<h3 id="a-2-legenda-da-votação">A.2. Legenda da votação</h3>
+
+<p><code>indent_type</code>:
+Tipo de indentação. <code>tab</code> = &quot;Usar o tab&quot;, <code>2</code> or <code>4</code> = &quot;Número de espaços&quot;.</p>
+
+<p><code>line_length_limit_soft</code>:
+O limite &quot;relativo&quot; do comprimento da linha, em caracteres. <code>?</code> = não optou or não respondeu, <code>no</code> significa sem limite.</p>
+
+<p><code>line_length_limit_hard</code>:
+O limite &quot;absoluto&quot; do comprimento da linha, em caracteres. <code>?</code> = não optou or não respondeu, <code>no</code> significa sem limite.</p>
+
+<p><code>class_names</code>:
+Como classes são nomeadas. <code>lower</code> = somente minúsculas, <code>lower_under</code> = minúsculas com separadores <code>_</code>, <code>studly</code> = StudlyCase.</p>
+
+<p><code>class_brace_line</code>:
+A chave de abertura da clase vai na mesma (<code>same</code>) linha que a palavra-chave da classe, ou na linha seguinte (<code>next</code>) à ela?</p>
+
+<p><code>constant_names</code>:
+Como as constantes de classes são nomeadas? <code>upper</code> = Somente maiúsculas com separadores <code>_</code>.</p>
+
+<p><code>true_false_null</code>:
+As palavras chaves <code>true</code>, <code>false</code>, and <code>null</code> são escritas todas em caracteres minúsculos (<code>lower</code>), ou em maiúsculos (<code>upper</code>)?</p>
+
+<p><code>method_names</code>:
+Como os métodos são nomeados? <code>camel</code> = <code>camelCase</code>, <code>lower_under</code> = caracteres minúsculos com separadores <code>_</code>.</p>
+
+<p><code>method_brace_line</code>:
+A chave de abertura para um método é colocada na mesma (<code>same</code>) linha que o nome do método, ou na linha seguinte (<code>next</code>)?</p>
+
+<p><code>control_brace_line</code>:
+A chave de abertura para uma estrutura de controle é colocada na mesma (<code>same</code>) linha que a palavra-chave da estrutura, ou na linha seguinte (<code>next</code>)?</p>
+
+<p><code>control_space_after</code>:
+Existe um espaço após a palavra-chave da estrutura de controle?</p>
+
+<p><code>always_use_control_braces</code>:
+As estruturas de controle sempre têm chaves?</p>
+
+<p><code>else_elseif_line</code>:
+Quando usando <code>else</code> ou <code>elseif</code>, estes são colocados na mesma (<code>same</code>) linha que a última chave de fechamento, ou na linha seguinte (<code>next</code>)?</p>
+
+<p><code>case_break_indent_from_switch</code>:
+Quantas vezes <code>case</code> e <code>break</code> são indentados dentro de uma declaração <code>switch</code>?</p>
+
+<p><code>function_space_after</code>:
+Chamadas de funções têm um espaço entre o nome da função e o parentese de abertura?</p>
+
+<p><code>closing_php_tag_required</code>:
+Em arquivos que possuam somente código PHP, a tag de fechamento <code>?&gt;</code> é requerida?</p>
+
+<p><code>line_endings</code>:
+Que tipo de terminação de linha é utilizado?</p>
+
+<p><code>static_or_visibility_first</code>:
+Quando declarando um método, <code>static</code> é colocado antes ou a visibilidade é colocado antes?</p>
+
+<p><code>control_space_parens</code>:
+Numa expressão de estruturas de controle, há um espaço após o parentese de abertura e um espaço antes do parentese de fechamento? <code>yes</code> = <code>if ( $expr )</code>, <code>no</code> = <code>if ($expr)</code>.</p>
+
+<p><code>blank_line_after_php</code>:
+Ha um linha em branco após a tag de abertura do PHP?</p>
+
+<p><code>class_method_control_brace</code>:
+Um resumo de onde é colocado a chave de abertura para classes, métodos e estruturas de controle.</p>
+
+<h3 id="a-3-resultado-da-votação">A.3. Resultado da votação</h3>
+<div class="highlight"><pre><code class="language-text" data-lang="text">indent_type:
+    tab: 7
+    2: 1
+    4: 14
+line_length_limit_soft:
+    ?: 2
+    no: 3
+    75: 4
+    80: 6
+    85: 1
+    100: 1
+    120: 4
+    150: 1
+line_length_limit_hard:
+    ?: 2
+    no: 11
+    85: 4
+    100: 3
+    120: 2
+class_names:
+    ?: 1
+    lower: 1
+    lower_under: 1
+    studly: 19
+class_brace_line:
+    next: 16
+    same: 6
+constant_names:
+    upper: 22
+true_false_null:
+    lower: 19
+    upper: 3
+method_names:
+    camel: 21
+    lower_under: 1
+method_brace_line:
+    next: 15
+    same: 7
+control_brace_line:
+    next: 4
+    same: 18
+control_space_after:
+    no: 2
+    yes: 20
+always_use_control_braces:
+    no: 3
+    yes: 19
+else_elseif_line:
+    next: 6
+    same: 16
+case_break_indent_from_switch:
+    0/1: 4
+    1/1: 4
+    1/2: 14
+function_space_after:
+    no: 22
+closing_php_tag_required:
+    no: 19
+    yes: 3
+line_endings:
+    ?: 5
+    LF: 17
+static_or_visibility_first:
+    ?: 5
+    either: 7
+    static: 4
+    visibility: 6
+control_space_parens:
+    ?: 1
+    no: 19
+    yes: 2
+blank_line_after_php:
+    ?: 1
+    no: 13
+    yes: 8
+class_method_control_brace:
+    next/next/next: 4
+    next/next/same: 11
+    next/same/same: 1
+    same/same/same: 6
+</code></pre></div>
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><b>PSR-2 — Guia de Estilo de Codificação</b></li>
+    
+    
+    
+    <li><a href="meta/index.html">PSR-2 Meta Documento</a></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../../psr-4/index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-2/pt-br/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+</html>

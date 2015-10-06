@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-4/fr/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-4 — Auto-chargement des classes</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><b>French</b></li>
+      
+    
+      
+        <li><a href="../ru/index.html">Russian</a></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="auto-chargement-des-classes">Auto-chargement des classes</h1>
+
+<p>Les mots clés &quot;DOIT&quot;, &quot;NE DOIT PAS&quot;, &quot;OBLIGATOIRE&quot;, &quot;DEVRA&quot;, &quot;NE DEVRA PAS&quot;,
+&quot;DEVRAIT&quot;, &quot;NE DEVRAIT PAS&quot;, &quot;RECOMMENDÉ&quot;, &quot;PEUT&quot; et &quot;OPTIONNELLE&quot; dans ce
+document doivent être interprétés comme décrit dans <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+
+<h2 id="1-vue-d-39-ensemble">1. Vue d&#39;ensemble</h2>
+
+<p>Ce PSR décrit une specification pour l&#39;<a href="http://php.net/autoload">auto-chargement</a> des classes depuis
+le lien des fichiers. Il est entièrement interopérable, et peut être utilisé en
+plus de toute autre spécification d&#39;auto-chargement, y compris <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md">PSR-0</a>.
+Ce PSR décrit également où placer les fichiers qui seront chargés
+automatiquement selon la spécification.</p>
+
+<h2 id="2-specification">2. Specification</h2>
+
+<ol>
+<li><p>Le terme &quot;classe&quot; se réfère aux classes, interfaces, traits et autres
+structures similaires.</p></li>
+<li><p>Un nom de classe entièrement qualifié a la forme suivante:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">\&lt;NamespaceName&gt;(\&lt;SubNamespaceNames&gt;)*\&lt;ClassName&gt;
+</code></pre></div>
+<ol>
+<li>Le nom de classe entièrement qualifié DOIT avoir un namespace de haut
+niveau, aussi connu comme un &quot;espace de noms du fournisseur&quot;.</li>
+<li>Le nom de classe entièrement qualifié PEUT avoir un ou plusieurs noms de
+sous-namespace.</li>
+<li>Le nom de classe entièrement qualifié DOIT finir par un nom de classe.</li>
+<li>Les underscores n&#39;ont aucune signification particulière dans quelque
+parti que ce soit du nom de classe entièrement qualifié.</li>
+<li>Les caractères alphabétiques dans le nom de classe entièrement qualifié
+PEUVENT être n&#39;importe quelle combinaison de minuscules et majuscules.</li>
+<li>Tous les noms de classe DOIVENT être référencés en tenant compte de la
+casse.</li>
+</ol></li>
+<li><p>Lors du chargement d&#39;un fichier qui correspond à un nom de classe entièrement
+qualifié ...</p>
+
+<ol>
+<li>Une série contiguë d&#39;un ou plusieurs namespace et sous-namespace,
+n&#39;incluant pas le séparateur de namespace principal, dans le nom de
+classe entièrement qualifié (un &quot;préfixe de namespace&quot;) correspond à au
+moins un &quot;répertoire de base&quot;.</li>
+<li>Les noms contigus de sous-namespace après le &quot;préfixe de namespace&quot;
+correspondent à un sous-répertoire dans un &quot;répertoire de base&quot;, dans
+lequel les séparateurs de namespace représentent des séparateurs de
+répertoires. Le nom de sous-répertoire DOIT correspondre à la casse des
+noms de sous-namespaces.</li>
+<li>Le nom de la classe de fin correspond à un nom de fichier se terminant
+par <code>.php</code>. Le nom du fichier DOIT correspondre à la casse du nom de
+la classe de fin.</li>
+</ol></li>
+<li><p>Les implémentations d&#39;auto-chargement de classe NE DOIVENT PAS créer
+d&#39;exceptions, NE DOIVENT PAS provoquer d&#39;erreur de quelque niveau que ce
+soit, et de NE DEVRAIT PAS retourner de valeur.</p></li>
+</ol>
+
+<h2 id="3-exemples">3. Exemples</h2>
+
+<p>Le tableau ci-dessous montre le chemin du fichier correspondant à un nom de
+classe entièrement qualifié, le préfixe du namespace, et le répertoire de base.</p>
+
+<table><thead>
+<tr>
+<th>Nom de Classe Entièrement Qualifié</th>
+<th>Préfixe du Namespace</th>
+<th>Répertoire de Base</th>
+<th>Chemin du Fichier Résultant</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>\Acme\Log\Writer\File_Writer</td>
+<td>Acme\Log\Writer</td>
+<td>./acme-log-writer/lib/</td>
+<td>./acme-log-writer/lib/File_Writer.php</td>
+</tr>
+<tr>
+<td>\Aura\Web\Response\Status</td>
+<td>Aura\Web</td>
+<td>/path/to/aura-web/src/</td>
+<td>/path/to/aura-web/src/Response/Status.php</td>
+</tr>
+<tr>
+<td>\Symfony\Core\Request</td>
+<td>Symfony\Core</td>
+<td>./vendor/Symfony/Core/</td>
+<td>./vendor/Symfony/Core/Request.php</td>
+</tr>
+<tr>
+<td>\Zend\Acl</td>
+<td>Zend</td>
+<td>/usr/includes/Zend/</td>
+<td>/usr/includes/Zend/Acl.php</td>
+</tr>
+</tbody></table>
+
+<p>Pour des exemples d&#39;implémentations d&#39;auto-chargement conformes à la
+spécification, voir les <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md">fichiers d&#39;exemple</a>. Les exemples d&#39;implémentations
+NE DOIVENT PAS être considérées comme faisant partie de la spécification et
+PEUVENT changer à tout moment.</p>
+
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-4/fr/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+</html>

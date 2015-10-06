@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from www.php-fig.org/psr/psr-4/ru/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:35 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/stylesheetc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/pygment_tracc4ca.css?1" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../../stylesheets/printc4ca.css?1" media="print">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-4 — Автозагрузчик</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a href="https://github.com/php-fig/fig-standards" class="button"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><a href="../index.html">English (official)</a></li>
+      
+    
+      
+        <li><a href="../fr/index.html">French</a></li>
+      
+    
+      
+        <li><b>Russian</b></li>
+      
+    
+      
+        <li><a href="../sl/index.html">Slovenian</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+  <p id="disclaimer">This is an unofficial translation of the original PSR document.
+  Translations are third-party contributions and may be incomplete, inaccurate or outdated.</p>
+
+
+
+<h1 id="Автозагрузчик">Автозагрузчик</h1>
+
+<p>Ключевые слова «ДОЛЖНО» («MUST»), «НЕДОПУСТИМО» («MUST NOT»), «ТРЕБУЕТСЯ»
+(«REQUIRED»), «НУЖНО» («SHALL»), «НЕ ПОЗВОЛЯЕТСЯ» («SHALL NOT»), «СЛЕДУЕТ»
+(«SHOULD»), «НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»),
+«МОЖЕТ» («MAY») и «НЕОБЯЗАТЕЛЬНО» («OPTIONAL»)
+в этом документе должны расцениваться так, как описано в <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+
+<h2 id="1-Обзор">1. Обзор</h2>
+
+<p>Данный PSR описывает спецификацию для <a href="http://php.net/autoload">автозагрузки</a> классов на основе путей файлов. Она полностью взаимозаменяема и
+может использоваться в дополнение к любой другой спецификации автозагрузчика, включая <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md">PSR-0</a>. Данный PSR также
+описывает, где размещать файлы, которые будут загружаться в соответствии со спецификацией.</p>
+
+<h2 id="2-Спецификация">2. Спецификация</h2>
+
+<ol>
+<li><p>Термин &quot;класс&quot; обозначает как классы, так и интерфейсы, трейты и другие подобные структуры.</p></li>
+<li><p>Абсолютное имя класса имеет следующую форму:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">\&lt;ИмяПространстваИмён&gt;(\&lt;ИменаПодпространствИмён&gt;)*\&lt;ИмяКласса&gt;
+</code></pre></div>
+<ol>
+<li>Абсолютное имя класса ДОЛЖНО включать в себя верхний уровень пространства имён, также известный как
+&quot;имя производителя&quot;.</li>
+<li>Абсолютное имя класса МОЖЕТ включать одно и более подпространство имён.</li>
+<li>Абсолютное имя класса ДОЛЖНО заканчиваться именем класса.</li>
+<li>Символы подчёркивания не имеют какого-либо особого значения в любой части абсолютного имени класса.</li>
+<li>Для буквенных символов абсолютного пространства имён МОЖЕТ использоваться любая комбинация верхнего и нижнего
+регистра.</li>
+<li>Все имена классов ДОЛЖНЫ использоваться в регистрозависимом стиле.</li>
+</ol></li>
+<li><p>При загрузке файла, соответствующего абсолютному имени класса:</p>
+
+<ol>
+<li>В абсолютном имени класса последовательность из одного или более ведущего пространства имён и подпространств
+имён (&quot;префикс пространства имён&quot;), исключая ведущий разделитель, соответствует как минимум одной
+&quot;базовой директории&quot;.</li>
+<li>Последовательность подпространств имён, следующая за &quot;префиксом пространства имён&quot;, соответствует поддиректории
+в &quot;базовой директории&quot;. Разделители пространства имён соответствуют разделителям директорий. Имя поддиректории
+ДОЛЖНО иметь тот же регистр символов, что и имена подпространств имён.</li>
+<li>Завершающее имя класса соответствует имени файла, заканчивающемуся <code>.php</code>. Имя файла ДОЛЖНО совпадать иметь тот же
+регистр символов, что и завершающее имя класса.</li>
+</ol></li>
+<li><p>В реализациях автозагрузчика НЕДОПУСТИМО выбрасывать исключения, НЕДОПУСТИМО вызывать ошибки любого уровня и
+НЕ СЛЕДУЕТ возвращать значение.</p></li>
+</ol>
+
+<h2 id="3-Примеры">3. Примеры</h2>
+
+<p>В таблице ниже показано соответствие пути к файлу, абсолютного имени класса, префикса пространства имён и базовой
+директории.</p>
+
+<table><thead>
+<tr>
+<th>Абсолютное имя класса</th>
+<th>Префикс пространства имён</th>
+<th>Базовая директория</th>
+<th>Путь к файлу</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>\Acme\Log\Writer\File_Writer</td>
+<td>Acme\Log\Writer</td>
+<td>./acme-log-writer/lib/</td>
+<td>./acme-log-writer/lib/File_Writer.php</td>
+</tr>
+<tr>
+<td>\Aura\Web\Response\Status</td>
+<td>Aura\Web</td>
+<td>/path/to/aura-web/src/</td>
+<td>/path/to/aura-web/src/Response/Status.php</td>
+</tr>
+<tr>
+<td>\Symfony\Core\Request</td>
+<td>Symfony\Core</td>
+<td>./vendor/Symfony/Core/</td>
+<td>./vendor/Symfony/Core/Request.php</td>
+</tr>
+<tr>
+<td>\Zend\Acl</td>
+<td>Zend</td>
+<td>/usr/includes/Zend/</td>
+<td>/usr/includes/Zend/Acl.php</td>
+</tr>
+</tbody></table>
+
+<p>Примеры реализации автозагрузчиков, соответствующих спецификации, приведены в <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md">файле примеров</a>. НЕДОПУСТИМО рассматривать
+их как часть спецификации. Примеры МОГУТ измениться в любое время.</p>
+
+
+
+<nav id="additional">
+  Additional Info:
+  <ul>
+    
+    
+    <li><b>PSR-4 — Автозагрузчик</b></li>
+    
+    
+    
+    <li><a href="meta/index.html">PSR-4 метадокумент</a></li>
+    
+    
+    
+    <li><a href="examples/index.html">Примеры реализации PSR-4</a></li>
+    
+    
+  </ul>
+</nav>
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" class="button mailing-list-button" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a href="../../../irc/index.html" class="button">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a href="../../../faq/index.html" class="button"  id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a href="../../index.html" class="button">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a href="../../psr-0/index.html" class="button">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a href="../../psr-1/index.html" class="button">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a href="../../psr-2/index.html" class="button">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a href="../../psr-3/index.html" class="button">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a href="../index.html" class="button">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a href="../../psr-7/index.html" class="button">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];_gaq.push(['_setAccount','UA-1997599-8']);_gaq.push(['_setDomainName','php-fig.org']);_gaq.push(['_trackPageview']);
+            (function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='https://ssl.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();
+        </script>
+    </body>
+
+<!-- Mirrored from www.php-fig.org/psr/psr-4/ru/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:36 GMT -->
+</html>

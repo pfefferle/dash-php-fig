@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en"><!-- Mirrored from www.php-fig.org/psr/psr-3/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:31 GMT --><!-- Added by HTTrack --><head><meta content="text/html;charset=utf-8" http-equiv="content-type"/><!-- /Added by HTTrack -->
+
+        <meta charset="utf-8"/>
+        <meta content="chrome=1" http-equiv="X-UA-Compatible"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <link href="../../stylesheets/stylesheetc4ca.css?1" media="screen" rel="stylesheet" type="text/css"/>
+        <link href="../../stylesheets/pygment_tracc4ca.css?1" media="screen" rel="stylesheet" type="text/css"/>
+        <link href="../../stylesheets/printc4ca.css?1" media="print" rel="stylesheet" type="text/css"/>
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>PSR-3 — Logger Interface</title>
+    </head>
+    <body>
+        <header>
+            <div class="inner">
+                <h1><a href="../../index.html">www.php-fig.org</a></h1>
+                <h2>PHP Framework Interop Group</h2>
+                <a class="button" href="https://github.com/php-fig/fig-standards"><small>View Our </small>Github Page</a>
+            </div>
+        </header>
+        <div id="content-wrapper">
+            <div class="inner clearfix">
+                <section id="main-content">
+                    
+<nav id="lngmenu">
+  Available translations:
+  <ul>
+    
+      
+        <li><b>English (official)</b></li>
+      
+    
+      
+        <li><a href="fr/index.html">French</a></li>
+      
+    
+      
+        <li><a href="sl/index.html">Slovenian</a></li>
+      
+    
+      
+        <li><a href="es/index.html">Spanish</a></li>
+      
+    
+  </ul>
+</nav>
+
+
+
+
+<h1 id="logger-interface"><a class="dashAnchor" name="//apple_ref/cpp/Section/Logger%20Interface"></a>Logger Interface</h1>
+
+<p>This document describes a common interface for logging libraries.</p>
+
+<p>The main goal is to allow libraries to receive a <code>Psr\Log\LoggerInterface</code>
+object and write logs to it in a simple and universal way. Frameworks
+and CMSs that have custom needs MAY extend the interface for their own
+purpose, but SHOULD remain compatible with this document. This ensures
+that the third-party libraries an application uses can write to the
+centralized application logs.</p>
+
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+
+<p>The word <code>implementor</code> in this document is to be interpreted as someone
+implementing the <code>LoggerInterface</code> in a log-related library or framework.
+Users of loggers are referred to as <code>user</code>.</p>
+
+<h2 id="1-specification"><a class="dashAnchor" name="//apple_ref/cpp/Section/1.%20Specification"></a>1. Specification</h2>
+
+<h3 id="1-1-basics"><a class="dashAnchor" name="//apple_ref/cpp/Section/1.1%20Basics"></a>1.1 Basics</h3>
+
+<ul>
+<li><p>The <code>LoggerInterface</code> exposes eight methods to write logs to the eight
+<a href="http://tools.ietf.org/html/rfc5424">RFC 5424</a> levels (debug, info, notice, warning, error, critical, alert,
+emergency).</p></li>
+<li><p>A ninth method, <code>log</code>, accepts a log level as first argument. Calling this
+method with one of the log level constants MUST have the same result as
+calling the level-specific method. Calling this method with a level not
+defined by this specification MUST throw a <code>Psr\Log\InvalidArgumentException</code>
+if the implementation does not know about the level. Users SHOULD NOT use a
+custom level without knowing for sure the current implementation supports it.</p></li>
+</ul>
+
+<h3 id="1-2-message"><a class="dashAnchor" name="//apple_ref/cpp/Section/1.2%20Message"></a>1.2 Message</h3>
+
+<ul>
+<li><p>Every method accepts a string as the message, or an object with a
+<code>__toString()</code> method. Implementors MAY have special handling for the passed
+objects. If that is not the case, implementors MUST cast it to a string.</p></li>
+<li><p>The message MAY contain placeholders which implementors MAY replace with
+values from the context array.</p></li>
+</ul>
+
+<p>Placeholder names MUST correspond to keys in the context array.</p>
+
+<p>Placeholder names MUST be delimited with a single opening brace <code>{</code> and
+  a single closing brace <code>}</code>. There MUST NOT be any whitespace between the
+  delimiters and the placeholder name.</p>
+
+<p>Placeholder names SHOULD be composed only of the characters <code>A-Z</code>, <code>a-z</code>,
+  <code>0-9</code>, underscore <code>_</code>, and period <code>.</code>. The use of other characters is
+  reserved for future modifications of the placeholders specification.</p>
+
+<p>Implementors MAY use placeholders to implement various escaping strategies
+  and translate logs for display. Users SHOULD NOT pre-escape placeholder
+  values since they can not know in which context the data will be displayed.</p>
+
+<p>The following is an example implementation of placeholder interpolation
+  provided for reference purposes only:</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">  /**</span>
+<span class="x">   * Interpolates context values into the message placeholders.</span>
+<span class="x">   */</span>
+<span class="x">  function interpolate($message, array $context = array())</span>
+<span class="x">  {</span>
+<span class="x">      // build a replacement array with braces around the context keys</span>
+<span class="x">      $replace = array();</span>
+<span class="x">      foreach ($context as $key =&gt; $val) {</span>
+<span class="x">          $replace['{' . $key . '}'] = $val;</span>
+<span class="x">      }</span>
+
+<span class="x">      // interpolate replacement values into the message and return</span>
+<span class="x">      return strtr($message, $replace);</span>
+<span class="x">  }</span>
+
+<span class="x">  // a message with brace-delimited placeholder names</span>
+<span class="x">  $message = "User {username} created";</span>
+
+<span class="x">  // a context array of placeholder names =&gt; replacement values</span>
+<span class="x">  $context = array('username' =&gt; 'bolivar');</span>
+
+<span class="x">  // echoes "User bolivar created"</span>
+<span class="x">  echo interpolate($message, $context);</span>
+</code></pre></div>
+<h3 id="1-3-context"><a class="dashAnchor" name="//apple_ref/cpp/Section/1.3%20Context"></a>1.3 Context</h3>
+
+<ul>
+<li><p>Every method accepts an array as context data. This is meant to hold any
+extraneous information that does not fit well in a string. The array can
+contain anything. Implementors MUST ensure they treat context data with
+as much lenience as possible. A given value in the context MUST NOT throw
+an exception nor raise any php error, warning or notice.</p></li>
+<li><p>If an <code>Exception</code> object is passed in the context data, it MUST be in the
+<code>'exception'</code> key. Logging exceptions is a common pattern and this allows
+implementors to extract a stack trace from the exception when the log
+backend supports it. Implementors MUST still verify that the <code>'exception'</code>
+key is actually an <code>Exception</code> before using it as such, as it MAY contain
+anything.</p></li>
+</ul>
+
+<h3 id="1-4-helper-classes-and-interfaces"><a class="dashAnchor" name="//apple_ref/cpp/Section/1.4%20Helper%20classes%20and%20interfaces"></a>1.4 Helper classes and interfaces</h3>
+
+<ul>
+<li><p>The <code>Psr\Log\AbstractLogger</code> class lets you implement the <code>LoggerInterface</code>
+very easily by extending it and implementing the generic <code>log</code> method.
+The other eight methods are forwarding the message and context to it.</p></li>
+<li><p>Similarly, using the <code>Psr\Log\LoggerTrait</code> only requires you to
+implement the generic <code>log</code> method. Note that since traits can not implement
+interfaces, in this case you still have to implement <code>LoggerInterface</code>.</p></li>
+<li><p>The <code>Psr\Log\NullLogger</code> is provided together with the interface. It MAY be
+used by users of the interface to provide a fall-back "black hole"
+implementation if no logger is given to them. However conditional logging
+may be a better approach if context data creation is expensive.</p></li>
+<li><p>The <code>Psr\Log\LoggerAwareInterface</code> only contains a
+<code>setLogger(LoggerInterface $logger)</code> method and can be used by frameworks to
+auto-wire arbitrary instances with a logger.</p></li>
+<li><p>The <code>Psr\Log\LoggerAwareTrait</code> trait can be used to implement the equivalent
+interface easily in any class. It gives you access to <code>$this-&gt;logger</code>.</p></li>
+<li><p>The <code>Psr\Log\LogLevel</code> class holds constants for the eight log levels.</p></li>
+</ul>
+
+<h2 id="2-package"><a class="dashAnchor" name="//apple_ref/cpp/Section/2.%20Package"></a>2. Package</h2>
+
+<p>The interfaces and classes described as well as relevant exception classes
+and a test suite to verify your implementation is provided as part of the
+<a href="https://packagist.org/packages/psr/log">psr/log</a> package.</p>
+
+<h2 id="3-psr-log-loggerinterface"><a class="dashAnchor" name="//apple_ref/cpp/Section/3.%20Psr%5CLog%5CLoggerInterface"></a>3. <code>Psr\Log\LoggerInterface</code></h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Psr\Log</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Describes a logger instance</span>
+<span class="sd"> *</span>
+<span class="sd"> * The message MUST be a string or object implementing __toString().</span>
+<span class="sd"> *</span>
+<span class="sd"> * The message MAY contain placeholders in the form: {foo} where foo</span>
+<span class="sd"> * will be replaced by the context data in key "foo".</span>
+<span class="sd"> *</span>
+<span class="sd"> * The context array can contain arbitrary data, the only assumption that</span>
+<span class="sd"> * can be made by implementors is that if an Exception instance is given</span>
+<span class="sd"> * to produce a stack trace, it MUST be in a key named "exception".</span>
+<span class="sd"> *</span>
+<span class="sd"> * See https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md</span>
+<span class="sd"> * for the full interface specification.</span>
+<span class="sd"> */</span>
+<span class="k">interface</span> <span class="nx">LoggerInterface</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * System is unusable.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">emergency</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Action must be taken immediately.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Example: Entire website down, database unavailable, etc. This should</span>
+<span class="sd">     * trigger the SMS alerts and wake you up.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">alert</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Critical conditions.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Example: Application component unavailable, unexpected exception.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">critical</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Runtime errors that do not require immediate action but should typically</span>
+<span class="sd">     * be logged and monitored.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">error</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Exceptional occurrences that are not errors.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Example: Use of deprecated APIs, poor use of an API, undesirable things</span>
+<span class="sd">     * that are not necessarily wrong.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">warning</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Normal but significant events.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">notice</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Interesting events.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Example: User logs in, SQL logs.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">info</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Detailed debug information.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">debug</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Logs with an arbitrary level.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param mixed $level</span>
+<span class="sd">     * @param string $message</span>
+<span class="sd">     * @param array $context</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">log</span><span class="p">(</span><span class="nv">$level</span><span class="p">,</span> <span class="nv">$message</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$context</span> <span class="o">=</span> <span class="k">array</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="4-psr-log-loggerawareinterface"><a class="dashAnchor" name="//apple_ref/cpp/Section/4.%20Psr%5CLog%5CLoggerAwareInterface"></a>4. <code>Psr\Log\LoggerAwareInterface</code></h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Psr\Log</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Describes a logger-aware instance</span>
+<span class="sd"> */</span>
+<span class="k">interface</span> <span class="nx">LoggerAwareInterface</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Sets a logger instance on the object</span>
+<span class="sd">     *</span>
+<span class="sd">     * @param LoggerInterface $logger</span>
+<span class="sd">     * @return null</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setLogger</span><span class="p">(</span><span class="nx">LoggerInterface</span> <span class="nv">$logger</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="5-psr-log-loglevel"><a class="dashAnchor" name="//apple_ref/cpp/Section/5.%20Psr%5CLog%5CLogLevel"></a>5. <code>Psr\Log\LogLevel</code></h2>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Psr\Log</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Describes log levels</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">LogLevel</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="no">EMERGENCY</span> <span class="o">=</span> <span class="s1">'emergency'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">ALERT</span>     <span class="o">=</span> <span class="s1">'alert'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">CRITICAL</span>  <span class="o">=</span> <span class="s1">'critical'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">ERROR</span>     <span class="o">=</span> <span class="s1">'error'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">WARNING</span>   <span class="o">=</span> <span class="s1">'warning'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">NOTICE</span>    <span class="o">=</span> <span class="s1">'notice'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">INFO</span>      <span class="o">=</span> <span class="s1">'info'</span><span class="p">;</span>
+    <span class="k">const</span> <span class="no">DEBUG</span>     <span class="o">=</span> <span class="s1">'debug'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+
+                </section>
+                <aside id="sidebar">
+
+    <a class="button mailing-list-button" href="https://groups.google.com/forum/?fromgroups#!forum/php-fig" target="_blank">
+        <small>Join Our</small>
+        Mailing List
+    </a>
+
+    <a class="button mailing-list-button" href="https://groups.google.com/forum/?fromgroups#!forum/php-fig-cs" target="_blank">
+        <small>Join Our</small>
+        CS Mailing List
+    </a>
+
+    <a class="button" href="../../irc/index.html">
+        <small>freenode#phpfig</small>
+        IRC Chat
+    </a>
+
+    <a class="button" href="../../faq/index.html" id="faq-button">
+        <small>Frequently Asked</small>
+        Questions
+    </a>
+
+    <a class="button" href="../index.html">
+        <small>PSR index</small>
+        All PSRs
+    </a>
+
+    <a class="button" href="../psr-0/index.html">
+        <small>Autoloading Standard</small>
+        PSR-0
+    </a>
+
+    <a class="button" href="../psr-1/index.html">
+        <small>Basic Coding Standard</small>
+        PSR-1
+    </a>
+
+    <a class="button" href="../psr-2/index.html">
+        <small>Coding Style Guide</small>
+        PSR-2
+    </a>
+
+    <a class="button" href="index.html">
+        <small>Logger Interface</small>
+        PSR-3
+    </a>
+
+    <a class="button" href="../psr-4/index.html">
+        <small>Improved Autoloading</small>
+        PSR-4
+    </a>    
+
+    <a class="button" href="../psr-7/index.html">
+        <small>HTTP Message Interfaces</small>
+        PSR-7
+    </a>
+
+</aside>
+
+            </div>
+        </div>
+        
+    
+
+
+
+</body><!-- Mirrored from www.php-fig.org/psr/psr-3/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 06 Oct 2015 10:15:32 GMT --></html>
